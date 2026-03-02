@@ -16,8 +16,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { signUpSchema } from "../schema/signUpSchema";
 import Link from "next/link";
+import { useSignUp } from "../hooks/useSignUp";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 const SignUpForm = () => {
+  const router = useRouter();
+  const { mutate: signUp, isPending } = useSignUp();
+
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -29,7 +36,15 @@ const SignUpForm = () => {
   });
 
   function onSubmit(values: z.infer<typeof signUpSchema>) {
-    console.log(values);
+    signUp(values, {
+      onSuccess: () => {
+        toast.success("Account created successfully!");
+        router.push("/auth/sign-in");
+      },
+      onError: (error) => {
+        toast.error(error.message || "Failed to create account");
+      },
+    });
   }
 
   return (
@@ -135,12 +150,22 @@ const SignUpForm = () => {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full bg-[#0fb7a8] py-6 text-white hover:bg-[#0da396]"
-            >
-              Sign Up
-            </Button>
+            {isPending ? (
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full bg-[#0fb7a8] py-6 text-white hover:bg-[#0da396] disabled:cursor-not-allowed"
+              >
+                <Spinner /> Sign Up
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                className="w-full bg-[#0fb7a8] py-6 text-white hover:bg-[#0da396]"
+              >
+                Sign Up
+              </Button>
+            )}
           </form>
         </Form>
 
