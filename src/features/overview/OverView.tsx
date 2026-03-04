@@ -192,13 +192,13 @@ const OverView = () => {
                 subspecialty
               </p>
               <div className="mt-4 rounded-lg bg-[#0f3b97] px-4 py-1 text-center text-lg font-semibold text-white">
-                1622 Highlights
+                162 Highlights
               </div>
             </article>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 pt-2 text-slate-900 md:grid-cols-3 dark:text-slate-100">
+        {/* <div className="grid grid-cols-1 gap-6 pt-2 text-slate-900 md:grid-cols-3 dark:text-slate-100">
           <div>
             <h5 className="text-3xl font-semibold">AviadLavian</h5>
             <ul className="mt-2 space-y-1.5 text-xl text-slate-700 dark:text-slate-400">
@@ -230,7 +230,7 @@ const OverView = () => {
               <li>CME Information &amp; Disclosures</li>
             </ul>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

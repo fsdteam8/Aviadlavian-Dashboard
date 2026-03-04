@@ -29,7 +29,7 @@ const menuItems: MenuItem[] = [
   { label: "About", icon: Info },
   { label: "Question Bank", icon: SquareKanban },
   { label: "Learning Plan", icon: FileText },
-  { label: "Flashcards", icon: Sparkles },
+  { label: "Flashcards", icon: Sparkles, url: "/flashcards" },
   { label: "Custom Quizzes", icon: BookText },
   { label: "Settings", icon: Settings },
   { label: "Feedback", icon: MessageSquare },
@@ -66,13 +66,13 @@ const Sidebar = () => {
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-16 items-center justify-between border-b border-slate-700/70 px-4 md:h-14">
-          <div>
+        <div className="flex  items-center justify-between border-b border-slate-700/70 px-4 ">
+          {/* <div>
             <h2 className="text-base font-semibold text-slate-100">
               Dashboard
             </h2>
             <p className="text-xs text-slate-400">Admin workspace</p>
-          </div>
+          </div> */}
 
           <button
             type="button"

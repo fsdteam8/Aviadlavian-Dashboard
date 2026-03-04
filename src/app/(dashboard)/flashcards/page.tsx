@@ -1,10 +1,10 @@
-import Library from "@/features/library/component/Library";
+import MainFlashCard from "@/features/flashcards/commponent/MainFlashCard";
 import React from "react";
 
 const page = () => {
   return (
     <div>
-      <Library />
+      <MainFlashCard />
     </div>
   );
 };

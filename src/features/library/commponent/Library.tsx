@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { ChevronRight, Dot, Flame } from "lucide-react";
+import Link from "next/link";
+import {
+  Brain,
+  ChevronRight,
+  Circle,
+  Dumbbell,
+  Footprints,
+} from "lucide-react";
 import { useLibrary } from "../hooks/uselibrary";
 import { LibraryArticle, LibraryRegion } from "../type/library";
 
@@ -65,6 +72,31 @@ const REGION_ORDER: LibraryRegion[] = [
   "OTHER",
 ];
 
+const REGION_META: Record<
+  LibraryRegion,
+  {
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+    iconClassName: string;
+  }
+> = {
+  "AXIAL SKELETON": {
+    icon: Brain,
+    iconClassName: "text-rose-500",
+  },
+  "UPPER LIMB": {
+    icon: Dumbbell,
+    iconClassName: "text-amber-500",
+  },
+  "LOWER LIMB": {
+    icon: Footprints,
+    iconClassName: "text-yellow-600",
+  },
+  OTHER: {
+    icon: Circle,
+    iconClassName: "text-slate-500",
+  },
+};
+
 const Library = () => {
   const { data, isLoading, isError, error } = useLibrary({
     page: 1,
@@ -91,7 +123,7 @@ const Library = () => {
 
   if (isLoading) {
     return (
-      <section className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <section className="w-full  rounded-2xl border border-slate-200/80 bg-white px-4 py-5 sm:px-6 dark:border-slate-700 dark:bg-slate-900">
         <p className="text-sm text-slate-600 dark:text-slate-300">
           Loading library...
         </p>
@@ -101,7 +133,7 @@ const Library = () => {
 
   if (isError) {
     return (
-      <section className="w-full rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm dark:border-red-900 dark:bg-red-950/40">
+      <section className="w-full  rounded-2xl border border-red-200 bg-red-50 px-4 py-5 sm:px-6 dark:border-red-900 dark:bg-red-950/40">
         <p className="text-sm text-red-700 dark:text-red-300">
           Failed to load articles:{" "}
           {error instanceof Error ? error.message : "Unknown error"}
@@ -111,7 +143,7 @@ const Library = () => {
   }
 
   return (
-    <section className="w-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <section className="w-full  rounded-2xl border border-slate-200/80 bg-white px-4 py-5 sm:px-6 dark:border-slate-700 dark:bg-slate-900">
       <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
         Text
       </h2>
@@ -124,18 +156,24 @@ const Library = () => {
           const articles = grouped[region];
           if (!articles.length) return null;
 
+          const RegionIcon = REGION_META[region].icon;
+
           return (
             <div key={region}>
-              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wide text-slate-600 dark:text-slate-300">
-                <Flame size={12} className="text-amber-500" />
+              <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold tracking-wide text-slate-700 dark:text-slate-300">
+                <RegionIcon
+                  size={13}
+                  className={REGION_META[region].iconClassName}
+                />
                 {region}
               </div>
 
-              <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700">
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900">
                 {articles.map((article, index) => (
-                  <article
+                  <Link
                     key={article._id}
-                    className={`flex items-center justify-between bg-white px-3 py-2.5 transition hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 ${
+                    href={`/library/${article._id}`}
+                    className={`flex items-center justify-between px-3 py-2.5 transition hover:bg-slate-50 dark:hover:bg-slate-800 ${
                       index !== articles.length - 1
                         ? "border-b border-slate-200 dark:border-slate-700"
                         : ""
@@ -151,7 +189,7 @@ const Library = () => {
                             className="h-full w-full object-cover"
                           />
                         ) : (
-                          <Dot size={18} className="text-slate-500" />
+                          <Circle size={14} className="text-slate-500" />
                         )}
                       </div>
 
@@ -169,12 +207,18 @@ const Library = () => {
                       size={14}
                       className="text-slate-500 dark:text-slate-300"
                     />
-                  </article>
+                  </Link>
                 ))}
               </div>
             </div>
           );
         })}
+
+        {!Object.values(grouped).some((items) => items.length > 0) && (
+          <div className="rounded-xl border border-slate-200 bg-white px-4 py-6 text-sm text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+            No sections available.
+          </div>
+        )}
       </div>
     </section>
   );
