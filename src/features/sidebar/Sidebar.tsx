@@ -37,15 +37,13 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { label: "Home", icon: Home, url: "/" },
-  { label: "Library", icon: Library, url: "/library" },
-  { label: "About", icon: Info },
-  { label: "Question Bank", icon: SquareKanban },
-  { label: "Learning Plan", icon: FileText },
-  { label: "Flashcards", icon: Sparkles, url: "/flashcards" },
-  { label: "Custom Quizzes", icon: BookText },
-  { label: "Settings", icon: Settings },
-  { label: "Feedback", icon: MessageSquare },
+  { label: "Dashboard", icon: Home, url: "/" },
+  { label: "Topics", icon: Library, url: "/topics" },
+  { label: "Articles", icon: Info },
+  { label: "Question & Answer", icon: SquareKanban },
+  { label: "Flashcards", icon: FileText },
+  { label: "Users", icon: Sparkles, url: "/flashcards" },
+  { label: "Settings", icon: BookText },
 ];
 
 const Sidebar = () => {

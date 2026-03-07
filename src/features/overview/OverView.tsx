@@ -1,236 +1,233 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import {
-  BookText,
+  User,
+  MessageSquare,
   FileText,
-  Grid2x2,
-  NotebookPen,
-  Settings,
-  Zap,
-  Clock3,
-  CircleDashed,
-  Microscope,
-  Coffee,
-  PencilLine,
-  Highlighter,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
-const topCards = [
+// Stat cards data
+const statCards = [
   {
-    title: "Text",
-    subtitle: "Cardiovascular Medicine > Epidemiology and Risk Factors",
-    icon: NotebookPen,
-    active: false,
+    title: "Total Users",
+    value: "521",
+    icon: User,
+    bgColor: "bg-blue-50",
+    iconBgColor: "bg-blue-500",
+    textColor: "text-blue-600",
   },
   {
-    title: "Question Bank",
-    subtitle: "MSKAP Questions > Endocrinology & Metabolism > Question 5",
-    icon: Grid2x2,
-    active: false,
+    title: "Questions & Answers",
+    value: "1500",
+    icon: MessageSquare,
+    bgColor: "bg-green-50",
+    iconBgColor: "bg-green-500",
+    textColor: "text-green-600",
   },
   {
-    title: "Learning Plan",
-    subtitle: "Pulmonary & Critical Care Medicine > Pulmonary Diagnostic Tests",
+    title: "Total Articles",
+    value: "125",
     icon: FileText,
-    active: true,
-  },
-  {
-    title: "Flashcard",
-    subtitle: "Cardiovascular Medicine",
-    icon: Zap,
-    active: false,
-  },
-  {
-    title: "Custom Quizzes",
-    subtitle: "Custom Quizzes > 8/5/2026",
-    icon: PencilLine,
-    active: false,
-  },
-  {
-    title: "Settings",
-    subtitle: "Make the Setup",
-    icon: Settings,
-    active: false,
+    bgColor: "bg-red-50",
+    iconBgColor: "bg-red-400",
+    textColor: "text-red-500",
   },
 ];
 
-const progressCards = [
-  {
-    label: "Study Sessions",
-    value: "42",
-    icon: Clock3,
-    color: "text-orange-500",
-    bg: "bg-orange-50",
-    border: "border-orange-200",
-  },
-  {
-    label: "Total Questions",
-    value: "2,457",
-    icon: CircleDashed,
-    color: "text-blue-500",
-    bg: "bg-blue-50",
-    border: "border-blue-200",
-  },
-  {
-    label: "Pathology Conditions",
-    value: "278",
-    icon: Microscope,
-    color: "text-emerald-500",
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-  },
-  {
-    label: "Flashcards",
-    value: "1351",
-    icon: Coffee,
-    color: "text-violet-500",
-    bg: "bg-violet-50",
-    border: "border-violet-200",
-  },
-];
+// Mock student data
+const studentData = Array.from({ length: 30 }, (_, i) => ({
+  id: i + 1,
+  name: "Students Name",
+  avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`,
+  lessons: 10,
+  quizzes: 12,
+  progress: 85,
+}));
+
+const ITEMS_PER_PAGE = 5;
 
 const OverView = () => {
+  const [currentPage, setCurrentPage] = useState(2);
+  const totalPages = Math.ceil(studentData.length / ITEMS_PER_PAGE);
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentStudents = studentData.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  const renderPageNumbers = () => {
+    const pages = [];
+
+    pages.push(1);
+
+    if (currentPage > 3) {
+      pages.push("...");
+    }
+
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    ) {
+      if (i !== 1 && i !== totalPages) {
+        pages.push(i);
+      }
+    }
+
+    if (currentPage < totalPages - 2) {
+      pages.push("...");
+    }
+
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   return (
-    <section className="w-full transition-colors dark:text-slate-100">
-      <div className="mx-auto space-y-6">
+    <section className="w-full p-6 transition-colors dark:text-slate-100">
+      <div className="mx-auto  space-y-8">
+        {/* Header */}
         <div>
-          <h2 className="text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">
-            Home
-          </h2>
-          {/* <p className="mt-2 text-2xl text-slate-800">
-            Pick up where you left off
-          </p> */}
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+            Dashboard
+          </h1>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {topCards.map((card) => {
-            const Icon = card.icon;
-
+        {/* Stat Cards */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          {statCards.map((stat) => {
+            const Icon = stat.icon;
             return (
-              <article
-                key={card.title}
-                className={`rounded-2xl border p-6 text-center shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
-                  card.active
-                    ? "border-blue-900 bg-[#0f3b97] text-white"
-                    : "border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
-                }`}
+              <div
+                key={stat.title}
+                className={`rounded-2xl ${stat.bgColor} p-6 shadow-sm`}
               >
-                <Icon
-                  size={38}
-                  className={`mx-auto ${card.active ? "text-white" : "text-[#0f3b97]"}`}
-                />
-                <h3 className="mt-4 text-4xl font-semibold">{card.title}</h3>
-                <p
-                  className={`mt-3 text-sm ${card.active ? "text-blue-100" : "text-slate-600 dark:text-slate-400"}`}
-                >
-                  {card.subtitle}
-                </p>
-              </article>
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`flex h-16 w-16 items-center justify-center rounded-xl ${stat.iconBgColor}`}
+                  >
+                    <Icon className="h-8 w-8 text-white" />
+                  </div>
+                  <div>
+                    <p className={`text-sm font-medium ${stat.textColor}`}>
+                      {stat.title}
+                    </p>
+                    <p className={`text-3xl font-bold ${stat.textColor}`}>
+                      {stat.value}
+                    </p>
+                  </div>
+                </div>
+              </div>
             );
           })}
         </div>
 
-        <div>
-          <h3 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            See Your Progress
-          </h3>
-          <div className="mt-3 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {progressCards.map((item) => {
-              const Icon = item.icon;
+        {/* Top Performing Students */}
+        <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-900">
+          <h2 className="mb-6 text-xl font-semibold text-slate-900 dark:text-slate-100">
+            Top Performing Students
+          </h2>
 
-              return (
-                <article
-                  key={item.label}
-                  className={`rounded-2xl border px-5 py-4 ${item.bg} ${item.border} dark:border-slate-700 dark:bg-slate-900`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`flex h-14 w-14 items-center justify-center rounded-full border-2 border-current/30 ${item.color}`}
-                    >
-                      <Icon size={28} />
-                    </div>
+          {/* Students List */}
+          <div className="space-y-4">
+            {currentStudents.map((student) => (
+              <div
+                key={student.id}
+                className="flex items-center justify-between border-b border-slate-100 pb-4 last:border-b-0 dark:border-slate-800"
+              >
+                {/* Student Info */}
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={student.avatar} alt={student.name} />
+                    <AvatarFallback>SN</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    {student.name}
+                  </span>
+                </div>
 
-                    <div>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">
-                        {item.label}
-                      </p>
-                      <p className="text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                        {item.value}
-                      </p>
+                {/* Stats */}
+                <div className="flex items-center gap-8">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                    {student.lessons} Lessons
+                  </span>
+                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                    {student.quizzes} quizzes
+                  </span>
+
+                  {/* Progress Bar */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-32 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                      <div
+                        className="h-full bg-teal-500"
+                        style={{ width: `${student.progress}%` }}
+                      />
                     </div>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                      {student.progress}%
+                    </span>
                   </div>
-                </article>
-              );
-            })}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="mt-6 flex items-center justify-end gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="h-10 w-10 rounded-full"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+
+            {renderPageNumbers().map((page, index) => (
+              <React.Fragment key={index}>
+                {page === "..." ? (
+                  <span className="px-2 text-slate-400">...</span>
+                ) : (
+                  <Button
+                    variant={currentPage === page ? "default" : "ghost"}
+                    size="icon"
+                    onClick={() => handlePageChange(page as number)}
+                    className={`h-10 w-10 rounded-full ${
+                      currentPage === page
+                        ? "bg-teal-500 text-white hover:bg-teal-600"
+                        : ""
+                    }`}
+                  >
+                    {page}
+                  </Button>
+                )}
+              </React.Fragment>
+            ))}
+
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="h-10 w-10 rounded-full"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         </div>
-
-        <div>
-          <h3 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-            Notes &amp; Highlights
-          </h3>
-          <div className="mt-3 grid grid-cols-1 gap-4 xl:grid-cols-2">
-            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-              <div className="flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                <BookText size={24} />
-                <h4 className="text-3xl font-semibold">Notes</h4>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
-                Your notes, organized by content type and subspecialty
-              </p>
-              <div className="mt-4 rounded-lg bg-[#0f3b97] px-4 py-1 text-center text-lg font-semibold text-white">
-                3 Notes
-              </div>
-            </article>
-
-            <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-700 dark:bg-slate-900">
-              <div className="flex items-center gap-3 text-slate-900 dark:text-slate-100">
-                <Highlighter size={24} />
-                <h4 className="text-3xl font-semibold">Highlights</h4>
-              </div>
-              <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
-                Content you&apos;ve highlighted, organized by type and
-                subspecialty
-              </p>
-              <div className="mt-4 rounded-lg bg-[#0f3b97] px-4 py-1 text-center text-lg font-semibold text-white">
-                162 Highlights
-              </div>
-            </article>
-          </div>
-        </div>
-
-        {/* <div className="grid grid-cols-1 gap-6 pt-2 text-slate-900 md:grid-cols-3 dark:text-slate-100">
-          <div>
-            <h5 className="text-3xl font-semibold">AviadLavian</h5>
-            <ul className="mt-2 space-y-1.5 text-xl text-slate-700 dark:text-slate-400">
-              <li>Setting Started</li>
-              <li>Answering Questions</li>
-              <li>Submitting for CME/MOC/CPO</li>
-              <li>Errata and Revisions</li>
-              <li>Contact Us</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="text-3xl font-semibold">MSK Nexus Resources</h5>
-            <ul className="mt-2 space-y-1.5 text-xl text-slate-700 dark:text-slate-400">
-              <li>High Value Care Recommendations</li>
-              <li>MSK Nexus</li>
-              <li>Download the App</li>
-              <li>MSK Nexus Resource Site</li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="text-3xl font-semibold">About MSK Nexus</h5>
-            <ul className="mt-2 space-y-1.5 text-xl text-slate-700 dark:text-slate-400">
-              <li>About MSK Nexus</li>
-              <li>Letter from the Editor</li>
-              <li>Contributors/Disclosures</li>
-              <li>License Agreement</li>
-              <li>CME Information &amp; Disclosures</li>
-            </ul>
-          </div>
-        </div> */}
       </div>
     </section>
   );

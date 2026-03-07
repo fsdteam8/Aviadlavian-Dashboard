@@ -28,7 +28,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="fixed top-0 right-0 left-0 z-30 h-16 border-b border-blue-950/40 bg-[#0f3b97] shadow-md">
+      <header className="fixed top-0 right-0 left-0 z-30 h-16 border-b border-blue-950/40 bg-black shadow-md">
         <button
           type="button"
           onClick={openSidebar}
