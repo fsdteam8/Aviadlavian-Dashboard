@@ -1,7 +1,5 @@
-import React from "react";
+import AllQuestions from "@/features/questions/components/AllQuestions";
 
-const page = () => {
-  return <div>questionbank</div>;
-};
-
-export default page;
+export default function QuestionsPage() {
+  return <AllQuestions />;
+}

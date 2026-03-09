@@ -20,6 +20,6 @@ export interface GetArticleResponse {
 }
 
 export const getArticle = async (id: string): Promise<GetArticleResponse> => {
-  const response = await api.get<GetArticleResponse>(`/article/${id}`);
+  const response = await api.get<GetArticleResponse>(`/article/get/${id}`);
   return response.data;
 };

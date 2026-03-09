@@ -29,6 +29,6 @@ export interface GetInjuryResponse {
 }
 
 export const getInjury = async (id: string): Promise<GetInjuryResponse> => {
-  const response = await api.get<GetInjuryResponse>(`/injury/${id}`);
+  const response = await api.get<GetInjuryResponse>(`/injury/get/${id}`);
   return response.data;
 };
