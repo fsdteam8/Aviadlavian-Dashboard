@@ -39,8 +39,8 @@ const menuItems: MenuItem[] = [
   { label: "Topics", icon: Library, url: "/topics" },
   { label: "Articles", icon: Info, url: "/articles" },
   { label: "Question & Answer", icon: SquareKanban, url: "/questionbank" },
-  { label: "Flashcards", icon: FileText },
-  { label: "Users", icon: Sparkles, url: "/flashcards" },
+  { label: "Flashcards", icon: FileText, url: "/flashcards" },
+  { label: "Users", icon: Sparkles, url: "/users" },
   { label: "Settings", icon: BookText },
 ];
 
