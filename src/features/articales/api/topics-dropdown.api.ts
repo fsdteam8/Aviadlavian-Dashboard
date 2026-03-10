@@ -4,6 +4,7 @@ export interface Topic {
   _id: string;
   Id: string;
   Name: string;
+  Primary_Body_Region: string;
 }
 
 export interface TopicsResponse {
