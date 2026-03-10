@@ -244,8 +244,11 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     {topicsData?.data?.map((topic) => (
-                      <SelectItem key={topic._id} value={topic.Id}>
-                        {topic.Id} - {topic.Name}
+                      <SelectItem
+                        key={topic._id}
+                        value={topic.Primary_Body_Region}
+                      >
+                        {topic.Primary_Body_Region} - {topic.Name}
                       </SelectItem>
                     ))}
                   </SelectContent>
