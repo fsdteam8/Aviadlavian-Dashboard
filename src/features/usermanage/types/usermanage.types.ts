@@ -44,6 +44,13 @@ export interface GetAllUsersResponse {
 export interface GetSingleUserResponse {
   message: string;
   statusCode: number;
-  status: string;
   data: User;
+}
+
+export interface UpdateUserPayload {
+  FirstName?: string;
+  LastName?: string;
+  country?: string;
+  status?: string;
+  image?: File;
 }

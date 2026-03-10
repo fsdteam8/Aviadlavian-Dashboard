@@ -238,7 +238,7 @@
           "response": []
         },
         {
-          "name": "update user",
+          "name": "update user(for user)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -374,7 +374,7 @@
           "response": []
         },
         {
-          "name": "update-status(admin)",
+          "name": "update-user/:userId(admin)",
           "request": {
             "auth": {
               "type": "bearer",
@@ -394,22 +394,128 @@
               }
             ],
             "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"active\"\n}"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "FirstName",
+                  "value": "Sabbir",
+                  "type": "text"
+                },
+                {
+                  "key": "LastName",
+                  "value": "Hossain",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "Bangladesh",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "blocked",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "02d3b916-c380-4a7d-bd23-0429532f5bdc",
+                  "src": "/C:/Users/Sabbir/Downloads/piqsels.com-id-zehdg.jpg"
+                }
+              ]
             },
             "url": {
-              "raw": "{{domain}}{{baseapi}}user/update-status/:userId",
+              "raw": "{{domain}}{{baseapi}}user/update-user/:userId",
               "host": ["{{domain}}{{baseapi}}user"],
-              "path": ["update-status", ":userId"],
+              "path": ["update-user", ":userId"],
               "variable": [
                 {
                   "key": "userId",
-                  "value": "69a5f9c4d3e901aaf536c400"
+                  "value": "6983ceee88159e0c0fc73e07"
                 }
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "update-status(admin)",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"status\": \"active\"\n}"
+                },
+                "url": {
+                  "raw": "{{domain}}{{baseapi}}user/update-status/:userId",
+                  "host": ["{{domain}}{{baseapi}}user"],
+                  "path": ["update-status", ":userId"],
+                  "variable": [
+                    {
+                      "key": "userId",
+                      "value": "69a5f9c4d3e901aaf536c400"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "470"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1d6-4QErZQy8L0lt8d/h/7CHqEqQPJU\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 10 Mar 2026 17:17:08 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"message\": \"User status updated successfully\",\n    \"statusCode\": 200,\n    \"status\": \"ok\",\n    \"data\": {\n        \"profileImage\": {\n            \"public_id\": \"mdjkp2duehqkakvzvdrb\",\n            \"secure_url\": \"https://res.cloudinary.com/dvfmrqurl/image/upload/v1773099925/mdjkp2duehqkakvzvdrb.jpg\"\n        },\n        \"_id\": \"69a5f9c4d3e901aaf536c400\",\n        \"email\": \"sabbir@gmail.com\",\n        \"status\": \"active\",\n        \"country\": \"Bangladesh\",\n        \"address\": \"Dhaka\",\n        \"dateOfBirth\": \"1998-05-10T00:00:00.000Z\",\n        \"instituteName\": \"DhakaMedicalCollege\",\n        \"registrationNumber\": \"REG98765\"\n    }\n}"
+            }
+          ]
         },
         {
           "name": "get-single-user(admin)",
@@ -443,10 +549,88 @@
               ]
             }
           },
-          "response": []
+          "response": [
+            {
+              "name": "get-single-user(admin)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{domain}}{{baseapi}}user/get-single-user/:userId",
+                  "host": ["{{domain}}{{baseapi}}user"],
+                  "path": ["get-single-user", ":userId"],
+                  "variable": [
+                    {
+                      "key": "userId",
+                      "value": "69a5f9c4d3e901aaf536c400"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "482"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"1e2-sG/KxdbLUno/x3HEdCNpntjJtPM\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 10 Mar 2026 17:17:04 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"message\": \"User fetched successfully\",\n    \"statusCode\": 200,\n    \"status\": \"ok\",\n    \"data\": {\n        \"profileImage\": {\n            \"public_id\": \"mdjkp2duehqkakvzvdrb\",\n            \"secure_url\": \"https://res.cloudinary.com/dvfmrqurl/image/upload/v1773099925/mdjkp2duehqkakvzvdrb.jpg\"\n        },\n        \"_id\": \"69a5f9c4d3e901aaf536c400\",\n        \"email\": \"sabbir@gmail.com\",\n        \"status\": \"active\",\n        \"isVerified\": false,\n        \"country\": \"Bangladesh\",\n        \"address\": \"Dhaka\",\n        \"dateOfBirth\": \"1998-05-10T00:00:00.000Z\",\n        \"instituteName\": \"DhakaMedicalCollege\",\n        \"registrationNumber\": \"REG98765\"\n    }\n}"
+            }
+          ]
         },
         {
           "name": "get-all-users(admin)",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "auth": {
               "type": "bearer",
@@ -458,7 +642,7 @@
                 }
               ]
             },
-            "method": "POST",
+            "method": "GET",
             "header": [],
             "body": {
               "mode": "raw",
@@ -470,28 +654,181 @@
               }
             },
             "url": {
-              "raw": "{{domain}}{{baseapi}}user/get-all-users?limit=2&search=rifat&filter=deactive",
+              "raw": "{{domain}}{{baseapi}}user/get-all-users?page=1&limit=10",
               "host": ["{{domain}}{{baseapi}}user"],
               "path": ["get-all-users"],
               "query": [
                 {
                   "key": "page",
-                  "value": "2",
-                  "disabled": true
+                  "value": "1"
                 },
                 {
                   "key": "limit",
-                  "value": "2"
+                  "value": "10"
                 },
                 {
                   "key": "search",
-                  "value": "rifat"
+                  "value": "rifat",
+                  "disabled": true
                 },
                 {
                   "key": "filter",
-                  "value": "deactive"
+                  "value": "deactiv",
+                  "disabled": true
                 }
               ]
+            }
+          },
+          "response": [
+            {
+              "name": "get-all-users(admin)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "// {\r\n//     \"email\":\"mohsinahmed22022@gmail.com\",\r\n//     \"password\":\"password@12345\"\r\n// }\r\n// {\r\n//     \"email\":\"shahed30@gmail.com\",\r\n//     \"password\":\"pass@123\"\r\n// }\r\n{\r\n    \"email\": \"mohsinahmed22022@gmail.com\",\r\n    \"password\": \"pass@123\"\r\n}\r\n\r\n// {\r\n//    \"email\":\"shahed30@gmail.com\",\r\n//     \"password\":\"pass@123\"\r\n// }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{domain}}{{baseapi}}user/get-all-users?page=1&limit=10",
+                  "host": ["{{domain}}{{baseapi}}user"],
+                  "path": ["get-all-users"],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    },
+                    {
+                      "key": "search",
+                      "value": "rifat",
+                      "disabled": true
+                    },
+                    {
+                      "key": "filter",
+                      "value": "deactive",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "X-Powered-By",
+                  "value": "Express"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json",
+                  "description": "",
+                  "type": "text"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "1374"
+                },
+                {
+                  "key": "ETag",
+                  "value": "W/\"55e-K6YgtGDjmoDZQt6ykUEBnG4XLJ8\""
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 10 Mar 2026 17:40:43 GMT"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "Keep-Alive",
+                  "value": "timeout=5"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"message\": \"Users fetched successfully\",\n    \"statusCode\": 200,\n    \"status\": \"ok\",\n    \"meta\": {\n        \"page\": 1,\n        \"limit\": 10,\n        \"totalUsers\": 16\n    },\n    \"data\": [\n        {\n            \"_id\": \"697e88513073b1f16a98c814\",\n            \"email\": \"admin4@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"_id\": \"6983ceee88159e0c0fc73e07\",\n            \"email\": \"user@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"_id\": \"69924d1b71de5fd8b49541f4\",\n            \"email\": \"shahed@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"_id\": \"699f6bab84073426b1b2bc4f\",\n            \"email\": \"shahed2@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"_id\": \"69a2eebd8252697c8284b32a\",\n            \"email\": \"shahed3@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"profileImage\": {\n                \"public_id\": \"mdjkp2duehqkakvzvdrb\",\n                \"secure_url\": \"https://res.cloudinary.com/dvfmrqurl/image/upload/v1773099925/mdjkp2duehqkakvzvdrb.jpg\"\n            },\n            \"_id\": \"69a5f9c4d3e901aaf536c400\",\n            \"FirstName\": \"FirstName\",\n            \"LastName\": \"LastName\",\n            \"email\": \"sabbir@gmail.com\",\n            \"role\": \"user\",\n            \"country\": \"Bangladesh\"\n        },\n        {\n            \"_id\": \"69a603e461c642779770450f\",\n            \"FirstName\": \"first\",\n            \"LastName\": \"last\",\n            \"email\": \"first@gmail.com\",\n            \"role\": \"user\"\n        },\n        {\n            \"_id\": \"69a605471ba3a79d42f41d20\",\n            \"FirstName\": \"first\",\n            \"LastName\": \"last\",\n            \"email\": \"first2@gmail.com\",\n            \"role\": \"user\"\n        },\n        {\n            \"_id\": \"69a6070e71c35b41a7c0fab0\",\n            \"FirstName\": \"first\",\n            \"LastName\": \"last\",\n            \"email\": \"first3@gmail.com\",\n            \"role\": \"user\"\n        },\n        {\n            \"_id\": \"69a60756a1fb22382b6a616d\",\n            \"FirstName\": \"first\",\n            \"LastName\": \"last\",\n            \"email\": \"first4@gmail.com\",\n            \"role\": \"user\"\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "delete-account(own account)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "FirstName",
+                  "value": "Sabbir",
+                  "type": "text"
+                },
+                {
+                  "key": "LastName",
+                  "value": "Hossain",
+                  "type": "text"
+                },
+                {
+                  "key": "country",
+                  "value": "Bangladesh",
+                  "type": "text"
+                },
+                {
+                  "key": "status",
+                  "value": "blocked",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "uuid": "02d3b916-c380-4a7d-bd23-0429532f5bdc",
+                  "src": "/C:/Users/Sabbir/Downloads/piqsels.com-id-zehdg.jpg"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{domain}}{{baseapi}}user/delete-account",
+              "host": ["{{domain}}{{baseapi}}user"],
+              "path": ["delete-account"]
             }
           },
           "response": []

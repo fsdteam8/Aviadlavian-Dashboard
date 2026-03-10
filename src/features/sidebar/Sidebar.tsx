@@ -41,7 +41,7 @@ const menuItems: MenuItem[] = [
   { label: "Question & Answer", icon: SquareKanban, url: "/questionbank" },
   { label: "Flashcards", icon: FileText, url: "/flashcards" },
   { label: "Users", icon: Sparkles, url: "/users" },
-  { label: "Settings", icon: BookText },
+  { label: "Settings", icon: BookText, url: "/settings" },
 ];
 
 const Sidebar = () => {
