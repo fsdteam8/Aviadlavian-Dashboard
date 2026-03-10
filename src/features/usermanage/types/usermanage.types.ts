@@ -12,8 +12,25 @@ export interface User {
   country?: string;
   FirstName?: string;
   LastName?: string;
+  firstName?: string;
+  lastName?: string;
+  status?: string;
+  isVerified?: boolean;
+  address?: string;
+  instituteName?: string;
+  idNumber?: string;
+  registrationNumber?: string;
+  dateOfBirth?: string;
+  profession?: string;
   // The API sometimes returns an empty array instead of an object for missing images
   profileImage?: UserProfileImage | unknown[];
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  totalUsers: number;
+  totalPages: number;
 }
 
 export interface GetAllUsersResponse {
@@ -21,4 +38,19 @@ export interface GetAllUsersResponse {
   statusCode: number;
   status: string;
   data: User[];
+  meta: PaginationMeta;
+}
+
+export interface GetSingleUserResponse {
+  message: string;
+  statusCode: number;
+  data: User;
+}
+
+export interface UpdateUserPayload {
+  FirstName?: string;
+  LastName?: string;
+  country?: string;
+  status?: string;
+  image?: File;
 }
