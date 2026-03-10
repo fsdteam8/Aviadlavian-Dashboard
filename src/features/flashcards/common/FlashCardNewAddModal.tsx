@@ -68,7 +68,7 @@ const FlashCardNewAddModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] bg-[#f8f9fa] rounded-2xl shadow-xl overflow-hidden p-8 border-none pointer-events-auto">
+      <DialogContent className="sm:max-w-[700px] bg-[#f8f9fa] text-slate-900 rounded-2xl shadow-xl overflow-hidden p-8 border-none pointer-events-auto">
         <div className="space-y-6">
           {/* Difficulty Selection */}
           <div className="flex items-center gap-6">
@@ -77,7 +77,7 @@ const FlashCardNewAddModal = ({
             </Label>
             <div className="relative">
               <Select value={difficulty} onValueChange={setDifficulty}>
-                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-gray-400 h-10 focus:ring-0">
+                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-slate-900 h-10 focus:ring-0">
                   <SelectValue placeholder="Medium" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200">
@@ -102,7 +102,7 @@ const FlashCardNewAddModal = ({
                   setSelectedTopicId(""); // Reset subspecialty when region changes
                 }}
               >
-                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-gray-400 h-10 focus:ring-0 uppercase">
+                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-slate-900 h-10 focus:ring-0 uppercase">
                   <SelectValue placeholder="KNEE" />
                 </SelectTrigger>
                 <SelectContent className="bg-white border-gray-200 h-[200px]">
@@ -131,7 +131,7 @@ const FlashCardNewAddModal = ({
                 onValueChange={setSelectedTopicId}
                 disabled={!selectedRegion || isLoadingInjuries}
               >
-                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-gray-400 h-10 focus:ring-0">
+                <SelectTrigger className="w-[120px] bg-white border border-gray-200 rounded-lg text-slate-900 h-10 focus:ring-0">
                   <SelectValue
                     placeholder={isLoadingInjuries ? "Loading..." : "select"}
                   />
@@ -155,7 +155,7 @@ const FlashCardNewAddModal = ({
             <div className="flex-1">
               <Input
                 placeholder="How many keys are there on a standard piano?"
-                className="w-full bg-white border border-gray-200 rounded-xl h-12 px-6 text-gray-400 focus:outline-none focus:border-gray-300 text-lg placeholder:text-gray-300 shadow-none border-none ring-0 focus-visible:ring-0"
+                className="w-full bg-white border border-gray-200 rounded-xl h-12 px-6 text-slate-900 focus:outline-none focus:border-gray-300 text-lg placeholder:text-slate-400 shadow-none border-none ring-0 focus-visible:ring-0"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
               />
@@ -170,7 +170,7 @@ const FlashCardNewAddModal = ({
             <div className="bg-white border border-gray-200 rounded-xl overflow-hidden p-6">
               <Textarea
                 placeholder="Full Answer......."
-                className="w-full min-h-[220px] bg-white border-none p-0 text-gray-400 focus:outline-none focus-visible:ring-0 text-lg placeholder:text-gray-300 resize-none"
+                className="w-full min-h-[220px] bg-white border-none p-0 text-slate-900 focus:outline-none focus-visible:ring-0 text-lg placeholder:text-slate-400 resize-none"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
               />

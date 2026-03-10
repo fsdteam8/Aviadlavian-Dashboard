@@ -37,5 +37,21 @@ export const getAllArticles = async (
 };
 
 export const deleteArticle = async (id: string): Promise<void> => {
-  await api.delete(`/article/${id}`);
+  try {
+    await api.delete(`/article/delete/${id}`);
+  } catch (error: unknown) {
+    const apiError = error as {
+      response?: {
+        data?: {
+          message?: string;
+        };
+      };
+    };
+
+    const errorMessage =
+      apiError?.response?.data?.message ||
+      (error instanceof Error ? error.message : "Failed to delete article");
+
+    throw new Error(errorMessage);
+  }
 };

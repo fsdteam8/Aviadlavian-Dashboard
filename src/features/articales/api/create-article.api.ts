@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 
 export interface CreateArticlePayload {
   name: string;
-  topicIds: string;
+  topicIds: string[];
   description: string;
   isActive: boolean;
   image?: File;
@@ -20,13 +20,49 @@ export interface CreateArticleResponse {
   };
 }
 
+const normalizeTopicIds = (input: string[] | string): string[] => {
+  const toArray = (value: string): string[] => {
+    const trimmed = value.trim();
+
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const normalizedJson = trimmed.replace(/'/g, '"');
+        const parsed = JSON.parse(normalizedJson);
+        if (Array.isArray(parsed)) {
+          return parsed.map((item) => String(item).trim()).filter(Boolean);
+        }
+      } catch {
+        const content = trimmed.slice(1, -1);
+        return content
+          .split(",")
+          .map((item) => item.trim().replace(/^['\"]|['\"]$/g, ""))
+          .filter(Boolean);
+      }
+    }
+
+    return [trimmed];
+  };
+
+  if (Array.isArray(input)) {
+    return input
+      .flatMap((item) => toArray(String(item)))
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  return toArray(String(input));
+};
+
 export const createArticle = async (
   payload: CreateArticlePayload,
 ): Promise<CreateArticleResponse> => {
   const formData = new FormData();
+  const topicIds = normalizeTopicIds(payload.topicIds);
 
   formData.append("name", payload.name);
-  formData.append("topicIds", payload.topicIds);
+  topicIds.forEach((topicId) => {
+    formData.append("topicIds", topicId);
+  });
   formData.append("description", payload.description);
   formData.append("isActive", String(payload.isActive));
 
