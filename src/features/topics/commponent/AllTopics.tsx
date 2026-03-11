@@ -3,6 +3,14 @@
 import React, { useState } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddTopicModal from "../common/AddTopicModal";
 import ViewTopicModal from "../common/ViewTopicModal";
@@ -18,7 +26,9 @@ const AllTopics = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [topicToDeleteId, setTopicToDeleteId] = useState<string | null>(null);
 
   // Use TanStack Query hooks
   const { data, isLoading, refetch } = useInjuries(currentPage, limit);
@@ -28,17 +38,24 @@ const AllTopics = () => {
   const totalPages = data?.meta.pages || 1;
   const total = data?.meta.total || 0;
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this topic?")) {
-      deleteInjuryMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Topic deleted successfully!");
-        },
-        onError: () => {
-          toast.error("Failed to delete topic");
-        },
-      });
-    }
+  const handleDeleteClick = (id: string) => {
+    setTopicToDeleteId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!topicToDeleteId) return;
+
+    deleteInjuryMutation.mutate(topicToDeleteId, {
+      onSuccess: () => {
+        toast.success("Topic deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setTopicToDeleteId(null);
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || "Failed to delete topic");
+      },
+    });
   };
 
   const handleView = (topicId: string) => {
@@ -88,7 +105,7 @@ const AllTopics = () => {
 
   return (
     <section className="w-full p-6 transition-colors dark:text-slate-100">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto ">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
@@ -176,7 +193,7 @@ const AllTopics = () => {
                       <Pencil className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(topic._id)}
+                      onClick={() => handleDeleteClick(topic._id)}
                       className="text-red-500 hover:text-red-600 transition-colors"
                       title="Delete"
                       disabled={deleteInjuryMutation.isPending}
@@ -270,6 +287,44 @@ const AllTopics = () => {
         }}
         topicId={selectedTopicId}
       />
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onOpenChange={(open) => {
+          if (deleteInjuryMutation.isPending) return;
+          setIsDeleteModalOpen(open);
+          if (!open) setTopicToDeleteId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Delete Topic</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this topic? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setTopicToDeleteId(null);
+              }}
+              disabled={deleteInjuryMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={deleteInjuryMutation.isPending || !topicToDeleteId}
+            >
+              {deleteInjuryMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };

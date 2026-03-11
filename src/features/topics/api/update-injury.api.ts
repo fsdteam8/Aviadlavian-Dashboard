@@ -80,8 +80,8 @@ export const updateInjury = async (
     formData.append("Image_URL", payload.Image_URL);
   }
 
-  const response = await api.put<UpdateInjuryResponse>(
-    `/injury/${id}`,
+  const response = await api.patch<UpdateInjuryResponse>(
+    `/injury/update/${id}`,
     formData,
   );
 

@@ -40,7 +40,7 @@ const FlashCardDetails = ({
         {/* Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            Flashcards
+            Flashcardsz
           </h1>
           <Link
             href="/flashcards"

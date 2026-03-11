@@ -59,11 +59,10 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
   };
 
   const handleTopicSelect = (topicId: string) => {
-    const topic = topicsData?.data.find((t) => t._id === topicId);
-    if (topic && !formData.topicIds.includes(topic.Id)) {
+    if (!formData.topicIds.includes(topicId)) {
       setFormData((prev) => ({
         ...prev,
-        topicIds: [...prev.topicIds, topic.Id],
+        topicIds: [...prev.topicIds, topicId],
       }));
     }
   };
@@ -112,9 +111,19 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
       return;
     }
 
+    const normalizedTopicIds = formData.topicIds
+      .map((topicRef) => {
+        if (/^[a-f\d]{24}$/i.test(topicRef)) return topicRef;
+        return (
+          topicsData?.data.find((topic) => topic.Id === topicRef)?._id ||
+          topicRef
+        );
+      })
+      .filter(Boolean);
+
     const payload = {
       name: formData.name,
-      topicIds: formData.topicIds.join(","),
+      topicIds: normalizedTopicIds,
       description: formData.description,
       isActive: formData.isActive,
       image: imageFile || undefined,
@@ -222,7 +231,10 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
                     key={topicId}
                     className="flex items-center gap-1 bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 px-3 py-1 rounded-full text-sm"
                   >
-                    <span>{topicId}</span>
+                    <span>
+                      {topicsData?.data.find((topic) => topic._id === topicId)
+                        ?.Id || topicId}
+                    </span>
                     <button
                       type="button"
                       onClick={() => removeTopicId(topicId)}
