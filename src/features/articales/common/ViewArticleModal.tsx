@@ -26,6 +26,16 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
   const { data, isLoading, isError } = useArticle(articleId);
 
   const article = data?.data;
+  const normalizedTopicIds = ((article?.topicIds || []) as unknown[])
+    .map((topic) => {
+      if (typeof topic === "string") return topic;
+      if (topic && typeof topic === "object") {
+        const topicObj = topic as { _id?: string; Id?: string; Name?: string };
+        return topicObj.Id || topicObj._id || topicObj.Name || "";
+      }
+      return "";
+    })
+    .filter(Boolean);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -60,7 +70,7 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
             <div>
               <Label className="mb-2 font-semibold">Topic IDs</Label>
               <div className="flex flex-wrap gap-2">
-                {article.topicIds.map((topicId) => (
+                {normalizedTopicIds.map((topicId) => (
                   <span
                     key={topicId}
                     className="bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 px-3 py-1 rounded-full text-sm"

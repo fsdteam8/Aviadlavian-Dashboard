@@ -130,9 +130,22 @@ export const createInjury = async (
 
 export const deleteInjury = async (id: string): Promise<void> => {
   try {
-    await api.delete(`/injury/${id}`);
-  } catch (error) {
+    await api.delete(`/injury/delete/${id}`);
+  } catch (error: unknown) {
     console.error("Error deleting injury:", error);
-    throw error;
+
+    const apiError = error as {
+      response?: {
+        data?: {
+          message?: string;
+        };
+      };
+    };
+
+    const errorMessage =
+      apiError?.response?.data?.message ||
+      (error instanceof Error ? error.message : "Failed to delete topic");
+
+    throw new Error(errorMessage);
   }
 };

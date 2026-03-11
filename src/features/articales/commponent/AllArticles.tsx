@@ -3,6 +3,14 @@
 import React, { useState } from "react";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddArticleModal from "../common/AddArticleModal";
 import ViewArticleModal from "../common/ViewArticleModal";
@@ -18,7 +26,11 @@ const AllArticles = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedArticleId, setSelectedArticleId] = useState<string | null>(
+    null,
+  );
+  const [articleToDeleteId, setArticleToDeleteId] = useState<string | null>(
     null,
   );
 
@@ -30,17 +42,24 @@ const AllArticles = () => {
   const totalPages = data?.meta.pages || 1;
   const total = data?.meta.total || 0;
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this article?")) {
-      deleteArticleMutation.mutate(id, {
-        onSuccess: () => {
-          toast.success("Article deleted successfully!");
-        },
-        onError: () => {
-          toast.error("Failed to delete article");
-        },
-      });
-    }
+  const handleDeleteClick = (id: string) => {
+    setArticleToDeleteId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!articleToDeleteId) return;
+
+    deleteArticleMutation.mutate(articleToDeleteId, {
+      onSuccess: () => {
+        toast.success("Article deleted successfully!");
+        setIsDeleteModalOpen(false);
+        setArticleToDeleteId(null);
+      },
+      onError: (error: Error) => {
+        toast.error(error.message || "Failed to delete article");
+      },
+    });
   };
 
   const handleView = (articleId: string) => {
@@ -90,7 +109,7 @@ const AllArticles = () => {
 
   return (
     <section className="w-full p-6 transition-colors dark:text-slate-100">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto ">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
@@ -192,7 +211,7 @@ const AllArticles = () => {
                       <Pencil className="h-5 w-5" />
                     </button>
                     <button
-                      onClick={() => handleDelete(article._id)}
+                      onClick={() => handleDeleteClick(article._id)}
                       className="text-red-500 hover:text-red-600 transition-colors"
                       title="Delete"
                       disabled={deleteArticleMutation.isPending}
@@ -286,6 +305,44 @@ const AllArticles = () => {
         }}
         articleId={selectedArticleId}
       />
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onOpenChange={(open) => {
+          if (deleteArticleMutation.isPending) return;
+          setIsDeleteModalOpen(open);
+          if (!open) setArticleToDeleteId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Delete Article</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this article? This action cannot
+              be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setArticleToDeleteId(null);
+              }}
+              disabled={deleteArticleMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmDelete}
+              disabled={deleteArticleMutation.isPending || !articleToDeleteId}
+            >
+              {deleteArticleMutation.isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
