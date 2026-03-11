@@ -90,7 +90,7 @@ const SubFlashCard = ({
     <div className="w-full">
       <div className="rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-6 dark:border-slate-700 dark:bg-slate-900">
         <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-          Flashcards
+          Flashcardsssssssssss
         </h1>
 
         <div className="mt-2 text-sm text-orange-700 dark:text-orange-400">
