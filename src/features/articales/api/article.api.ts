@@ -1,10 +1,22 @@
 import { api } from "@/lib/api";
 
+export interface TopicId {
+  _id: string;
+  Id: string;
+  Name: string;
+  Image_URL?: string;
+  Primary_Body_Region?: string;
+  Secondary_Body_Region?: string;
+  Acuity?: string;
+  Age_Group?: string;
+  Tissue_Type?: string[];
+}
+
 export interface Article {
   _id: string;
   Id: string;
   name: string;
-  topicIds?: string[];
+  topicIds?: TopicId[];
   description: string;
   isActive: boolean;
   image?: string;

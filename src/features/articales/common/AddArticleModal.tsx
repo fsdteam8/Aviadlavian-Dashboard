@@ -37,6 +37,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
 }) => {
   const createArticleMutation = useCreateArticle();
   const { data: topicsData, isLoading: isLoadingTopics } = useTopicsDropdown();
+  console.log("topics data", topicsData);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -217,7 +218,7 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
               <SelectContent>
                 {topicsData?.data.map((topic) => (
                   <SelectItem key={topic._id} value={topic._id}>
-                    {topic.Id} - {topic.Name}
+                    {topic.Id} - {topic.Primary_Body_Region}
                   </SelectItem>
                 ))}
               </SelectContent>
