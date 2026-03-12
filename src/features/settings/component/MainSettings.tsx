@@ -104,13 +104,13 @@ const MainSettings = () => {
             <span className="font-medium">Profile Settings</span>
           </div>
 
-          <button
+          {/* <button
             type="button"
             className="flex items-center gap-3 rounded-lg bg-slate-200 px-4 py-3 text-left text-slate-900 transition hover:bg-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700"
           >
             <Trash2 size={20} />
             <span className="font-medium">Delete Account</span>
-          </button>
+          </button> */}
         </div>
 
         <div className="mt-6 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/40">
@@ -159,7 +159,7 @@ const MainSettings = () => {
       </div>
 
       {/* Language and Region */}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2">
+      {/* <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div>
           <label className="block text-sm font-medium text-slate-900 dark:text-slate-100">
             Language
@@ -193,7 +193,7 @@ const MainSettings = () => {
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

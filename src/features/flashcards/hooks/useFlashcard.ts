@@ -7,6 +7,7 @@ import {
   updateFlashcard,
   deleteFlashcard,
 } from "../api/flashcard";
+import { toast } from "sonner";
 
 export const useFlashcards = (page: number = 1, limit: number = 5) => {
   return useQuery({
@@ -36,6 +37,10 @@ export const useCreateFlashcard = () => {
     mutationFn: createFlashcard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      toast.success("Flashcard created successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to create flashcard");
     },
   });
 };
@@ -47,6 +52,10 @@ export const useUpdateFlashcard = () => {
       updateFlashcard(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["flashcards"] });
+      toast.success("Flashcard updated successfully!");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update flashcard");
     },
   });
 };
