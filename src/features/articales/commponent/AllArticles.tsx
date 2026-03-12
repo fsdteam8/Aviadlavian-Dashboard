@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Eye, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -185,13 +185,17 @@ const AllArticles = () => {
                   <div
                     className="flex items-center text-slate-900 dark:text-slate-100 prose dark:prose-invert prose-sm max-w-none line-clamp-2"
                     dangerouslySetInnerHTML={{
-                      __html: article?.description || "",
+                      __html: article?.name || "",
                     }}
                   />
 
                   {/* Article ID */}
                   <div className="flex items-center justify-center text-slate-900 dark:text-slate-100">
-                    {article?.name || "N/A"}
+                    {article?.topicIds?.[0]?.Id
+                      ? article.topicIds[0].Id.length > 8
+                        ? `${article.topicIds[0].Id.slice(0, 8)}...`
+                        : article.topicIds[0].Id
+                      : "N/A"}
                   </div>
 
                   {/* Actions */}
@@ -201,7 +205,7 @@ const AllArticles = () => {
                       className="text-teal-500 hover:text-teal-600 transition-colors"
                       title="View"
                     >
-                      <Eye className="h-5 w-5" />
+                      <MoreHorizontal className="h-5 w-5" />
                     </button>
                     <button
                       onClick={() => handleEdit(article._id)}
