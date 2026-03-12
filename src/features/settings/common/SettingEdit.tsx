@@ -187,7 +187,7 @@ const SettingEdit = () => {
         </div>
 
         {/* Form Fields */}
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid ">
           <Label
             htmlFor="firstName"
             className="text-sm font-medium text-slate-900 dark:text-slate-100"
