@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import MainProviders from "@/Providers/MainProviders";
 import Provider from "@/Providers/Provider";
@@ -29,7 +30,9 @@ export default function RootLayout({
         <MainProviders>
           <Provider>{children}</Provider>
         </MainProviders>
-        <RouteAccessToast />
+        <Suspense fallback={null}>
+          <RouteAccessToast />
+        </Suspense>
         <Toaster position="top-right" closeButton />
       </body>
     </html>
