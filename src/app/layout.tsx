@@ -4,6 +4,7 @@ import "./globals.css";
 import MainProviders from "@/Providers/MainProviders";
 import Provider from "@/Providers/Provider";
 import { Toaster } from "sonner";
+import RouteAccessToast from "@/components/RouteAccessToast";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -28,6 +29,7 @@ export default function RootLayout({
         <MainProviders>
           <Provider>{children}</Provider>
         </MainProviders>
+        <RouteAccessToast />
         <Toaster position="top-right" closeButton />
       </body>
     </html>

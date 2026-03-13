@@ -37,6 +37,8 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(`${route}/`),
   );
 
+  const isAuthRoute = pathname.startsWith("/auth/");
+
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/api") ||
@@ -54,8 +56,15 @@ export async function proxy(request: NextRequest) {
     );
   }
 
+  // If authenticated user is not admin, block all non-auth routes
+  if (isAuthenticated && !isAdmin && !isAuthRoute) {
+    return NextResponse.redirect(
+      new URL("/auth/sign-in?error=forbidden-role", request.url),
+    );
+  }
+
   // If user is authenticated but trying to access auth routes (login/signup etc)
-  if (isAuthenticated && isPublicRoute && pathname.includes("/auth/")) {
+  if (isAuthenticated && isAdmin && isPublicRoute && isAuthRoute) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

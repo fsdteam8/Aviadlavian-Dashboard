@@ -72,6 +72,7 @@ const MainFlashCard = () => {
 
   const flashcards = data?.data || [];
   const meta = data?.meta;
+  // console.log('meta',meta)
 
   return (
     <div className="w-full">
@@ -124,7 +125,9 @@ const MainFlashCard = () => {
                       className="hover:bg-gray-50/50 transition-colors"
                     >
                       <td className="py-4 text-gray-700">
-                        {fc.topicId?.Secondary_Body_Region || "N/A"}
+                        {fc.topicId?.Secondary_Body_Region ||
+                          fc.topicId?.Name?.slice(0, 12) ||
+                          "N/A"}
                       </td>
                       <td className="py-4">
                         <span

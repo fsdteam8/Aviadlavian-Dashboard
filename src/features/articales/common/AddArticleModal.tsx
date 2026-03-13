@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +19,11 @@ import {
 } from "@/components/ui/select";
 import { useCreateArticle } from "../hooks/useCreateArticle";
 import { useTopicsDropdown } from "../hooks/useTopicsDropdown";
-import { Loader2, Upload, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, Upload, X } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
 import { toast } from "sonner";
 import Image from "next/image";
+import type { Topic } from "../api/topics-dropdown.api";
 
 interface AddArticleModalProps {
   isOpen: boolean;
@@ -36,8 +37,17 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
   onSuccess,
 }) => {
   const createArticleMutation = useCreateArticle();
-  const { data: topicsData, isLoading: isLoadingTopics } = useTopicsDropdown();
-  console.log("topics data", topicsData);
+  const [topicsPage, setTopicsPage] = useState(1);
+  const topicsLimit = 10;
+  const [selectedTopics, setSelectedTopics] = useState<Record<string, Topic>>(
+    {},
+  );
+
+  const {
+    data: topicsData,
+    isLoading: isLoadingTopics,
+    isFetching: isFetchingTopics,
+  } = useTopicsDropdown(topicsPage, topicsLimit);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -60,10 +70,21 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
   };
 
   const handleTopicSelect = (topicId: string) => {
+    const selectedTopic = topicsData?.data.find(
+      (topic) => topic._id === topicId,
+    );
+
     if (!formData.topicIds.includes(topicId)) {
       setFormData((prev) => ({
         ...prev,
         topicIds: [...prev.topicIds, topicId],
+      }));
+    }
+
+    if (selectedTopic) {
+      setSelectedTopics((prev) => ({
+        ...prev,
+        [topicId]: selectedTopic,
       }));
     }
   };
@@ -73,6 +94,12 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
       ...prev,
       topicIds: prev.topicIds.filter((id) => id !== topicIdToRemove),
     }));
+
+    setSelectedTopics((prev) => {
+      const nextTopics = { ...prev };
+      delete nextTopics[topicIdToRemove];
+      return nextTopics;
+    });
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +130,18 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
     setImageFile(null);
     setImagePreview("");
   };
+
+  const totalTopicPages = topicsData?.meta.pages ?? 1;
+
+  const selectedTopicChips = useMemo(() => {
+    return formData.topicIds.map((topicId) => ({
+      topicId,
+      label:
+        selectedTopics[topicId]?.Id ||
+        topicsData?.data.find((topic) => topic._id === topicId)?.Id ||
+        topicId,
+    }));
+  }, [formData.topicIds, selectedTopics, topicsData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,6 +184,8 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
         setImageFile(null);
         setVideoFile(null);
         setImagePreview("");
+        setTopicsPage(1);
+        setSelectedTopics({});
       },
       onError: (error) => {
         console.error("Mutation error:", error);
@@ -210,32 +251,70 @@ const AddArticleModal: React.FC<AddArticleModalProps> = ({
             <Label className="mb-2">Topic ID</Label>
             <Select
               onValueChange={handleTopicSelect}
-              disabled={isLoadingTopics}
+              disabled={isLoadingTopics || isFetchingTopics}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select Topic ID" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="w-[320px]">
                 {topicsData?.data.map((topic) => (
                   <SelectItem key={topic._id} value={topic._id}>
-                    {topic.Id} - {topic.Primary_Body_Region}
+                    {topic.Id} - {topic.Name}
                   </SelectItem>
                 ))}
+
+                <div className="flex items-center justify-between gap-2 border-t px-2 py-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setTopicsPage((prev) => Math.max(1, prev - 1));
+                    }}
+                    disabled={topicsPage === 1 || isFetchingTopics}
+                  >
+                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    Prev
+                  </Button>
+                  <span className="text-xs text-slate-500">
+                    Page {topicsPage} of {totalTopicPages} •{" "}
+                    {topicsData?.meta.total ?? 0} topics
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                      setTopicsPage((prev) =>
+                        Math.min(totalTopicPages, prev + 1),
+                      );
+                    }}
+                    disabled={
+                      topicsPage === totalTopicPages || isFetchingTopics
+                    }
+                  >
+                    Next
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
               </SelectContent>
             </Select>
 
             {/* Selected Topic IDs */}
             {formData.topicIds.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
-                {formData.topicIds.map((topicId) => (
+                {selectedTopicChips.map(({ topicId, label }) => (
                   <div
                     key={topicId}
                     className="flex items-center gap-1 bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 px-3 py-1 rounded-full text-sm"
                   >
-                    <span>
-                      {topicsData?.data.find((topic) => topic._id === topicId)
-                        ?.Id || topicId}
-                    </span>
+                    <span>{label}</span>
                     <button
                       type="button"
                       onClick={() => removeTopicId(topicId)}
