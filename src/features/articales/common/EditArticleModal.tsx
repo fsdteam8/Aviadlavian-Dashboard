@@ -283,6 +283,7 @@ const EditArticleModal: React.FC<EditArticleModalProps> = ({
                 content={formData.description}
                 onChange={handleDescriptionChange}
                 placeholder="Write your article content here..."
+                allowImages={true}
               />
             </div>
 

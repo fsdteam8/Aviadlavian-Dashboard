@@ -18,6 +18,84 @@ interface ViewArticleModalProps {
   articleId: string | null;
 }
 
+type TopicItem = string | { _id?: string; Id?: string; Name?: string };
+
+interface MediaObject {
+  secure_url?: string;
+  url?: string;
+}
+
+interface Article {
+  name: string;
+  topicIds: TopicItem[];
+  isActive: boolean;
+  description: string;
+  image?: string | MediaObject;
+  video?: string | MediaObject;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+const parseMedia = (value: unknown): string | MediaObject | undefined => {
+  if (typeof value === "string") return value;
+  if (!isRecord(value)) return undefined;
+
+  const secure_url =
+    typeof value.secure_url === "string" ? value.secure_url : undefined;
+  const url = typeof value.url === "string" ? value.url : undefined;
+
+  if (!secure_url && !url) return undefined;
+  return { secure_url, url };
+};
+
+const parseTopicItem = (value: unknown): TopicItem | null => {
+  if (typeof value === "string") return value;
+  if (!isRecord(value)) return null;
+
+  const _id = typeof value._id === "string" ? value._id : undefined;
+  const Id = typeof value.Id === "string" ? value.Id : undefined;
+  const Name = typeof value.Name === "string" ? value.Name : undefined;
+
+  if (!_id && !Id && !Name) return null;
+  return { _id, Id, Name };
+};
+
+const parseArticle = (value: unknown): Article | null => {
+  if (!isRecord(value)) return null;
+
+  const name = typeof value.name === "string" ? value.name : "";
+  const isActive = typeof value.isActive === "boolean" ? value.isActive : false;
+  const description =
+    typeof value.description === "string" ? value.description : "";
+
+  const topicIdsRaw = Array.isArray(value.topicIds) ? value.topicIds : [];
+  const topicIds = topicIdsRaw
+    .map(parseTopicItem)
+    .filter((item): item is TopicItem => item !== null);
+
+  const image = parseMedia(value.image);
+  const video = parseMedia(value.video);
+
+  const createdAt =
+    typeof value.createdAt === "string" ? value.createdAt : undefined;
+  const updatedAt =
+    typeof value.updatedAt === "string" ? value.updatedAt : undefined;
+
+  return {
+    name,
+    topicIds,
+    isActive,
+    description,
+    image,
+    video,
+    createdAt,
+    updatedAt,
+  };
+};
+
 const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
   isOpen,
   onClose,
@@ -25,20 +103,32 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
 }) => {
   const { data, isLoading, isError } = useArticle(articleId);
 
-  const article = data?.data;
-  const normalizedTopicIds = ((article?.topicIds || []) as unknown[])
+  const article = parseArticle(data?.data);
+
+  const normalizedTopicIds = (article?.topicIds ?? [])
     .map((topic) => {
       if (typeof topic === "string") return topic;
-      if (topic && typeof topic === "object") {
-        const topicObj = topic as { _id?: string; Id?: string; Name?: string };
-        return topicObj.Id || topicObj._id || topicObj.Name || "";
-      }
-      return "";
+      return topic.Id || topic._id || topic.Name || "";
     })
-    .filter(Boolean);
+    .filter((topicId): topicId is string => topicId.length > 0);
+
+  const imageUrl =
+    typeof article?.image === "string"
+      ? article.image
+      : article?.image?.secure_url || article?.image?.url || "";
+
+  const videoUrl =
+    typeof article?.video === "string"
+      ? article.video
+      : article?.video?.secure_url || article?.video?.url || "";
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
@@ -60,13 +150,11 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
 
         {article && (
           <div className="space-y-4">
-            {/* Article Name */}
             <div>
               <Label className="mb-2 font-semibold">Article Name</Label>
               <p className="text-gray-700 dark:text-gray-300">{article.name}</p>
             </div>
 
-            {/* Topic IDs */}
             <div>
               <Label className="mb-2 font-semibold">Topic IDs</Label>
               <div className="flex flex-wrap gap-2">
@@ -81,7 +169,6 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
               </div>
             </div>
 
-            {/* Status */}
             <div>
               <Label className="mb-2 font-semibold">Status</Label>
               <span
@@ -95,7 +182,6 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
               </span>
             </div>
 
-            {/* Description */}
             <div>
               <Label className="mb-2 font-semibold">Description</Label>
               <div
@@ -104,13 +190,12 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
               />
             </div>
 
-            {/* Image */}
-            {article.image && (
+            {imageUrl && (
               <div>
                 <Label className="mb-2 font-semibold">Image</Label>
                 <Image
-                  src={article.image}
-                  alt={article.name}
+                  src={imageUrl}
+                  alt={article.name || "Article image"}
                   width={1024}
                   height={256}
                   unoptimized
@@ -119,30 +204,32 @@ const ViewArticleModal: React.FC<ViewArticleModalProps> = ({
               </div>
             )}
 
-            {/* Video */}
-            {article.video && (
+            {videoUrl && (
               <div>
                 <Label className="mb-2 font-semibold">Video</Label>
                 <video
-                  src={article.video}
+                  src={videoUrl}
                   controls
                   className="w-full max-h-64 rounded-md border"
                 />
               </div>
             )}
 
-            {/* Metadata */}
             <div className="grid grid-cols-2 gap-4 pt-4 border-t">
               <div>
                 <Label className="mb-1 font-semibold text-sm">Created At</Label>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(article.createdAt).toLocaleString()}
+                  {article.createdAt
+                    ? new Date(article.createdAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
               <div>
                 <Label className="mb-1 font-semibold text-sm">Updated At</Label>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {new Date(article.updatedAt).toLocaleString()}
+                  {article.updatedAt
+                    ? new Date(article.updatedAt).toLocaleString()
+                    : "-"}
                 </p>
               </div>
             </div>

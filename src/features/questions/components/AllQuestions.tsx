@@ -111,8 +111,7 @@ const AllQuestions = () => {
         <div className="rounded-lg bg-white shadow dark:bg-slate-900 overflow-hidden">
           {/* Table Header */}
           <div className="grid grid-cols-12 gap-4 border-b border-slate-200 bg-slate-50 px-6 py-4 dark:border-slate-700 dark:bg-slate-800 text-sm font-semibold text-slate-900 dark:text-slate-100">
-            <div className="col-span-6">Question Text</div>
-            <div className="col-span-2 text-center">Topic ID</div>
+            <div className="col-span-8">Question Text</div>
             <div className="col-span-1 text-center">Marks</div>
             <div className="col-span-3 text-center">Actions</div>
           </div>
@@ -122,11 +121,8 @@ const AllQuestions = () => {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="grid grid-cols-12 gap-4 px-6 py-4">
-                  <div className="col-span-6 flex items-center">
+                  <div className="col-span-8 flex items-center">
                     <Skeleton className="h-5 w-full" />
-                  </div>
-                  <div className="col-span-2 flex items-center justify-center">
-                    <Skeleton className="h-5 w-16" />
                   </div>
                   <div className="col-span-1 flex items-center justify-center">
                     <Skeleton className="h-5 w-8" />
@@ -149,13 +145,8 @@ const AllQuestions = () => {
                   className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   {/* Question Text */}
-                  <div className="col-span-6 flex items-center text-slate-900 dark:text-slate-100 text-sm pr-4 line-clamp-2">
+                  <div className="col-span-8 flex items-center text-slate-900 dark:text-slate-100 text-sm pr-4 line-clamp-2">
                     {question.questionText}
-                  </div>
-
-                  {/* Topic ID */}
-                  <div className="col-span-2 flex items-center justify-center text-slate-600 dark:text-slate-400 text-sm">
-                    {question.topicId}
                   </div>
 
                   {/* Marks */}

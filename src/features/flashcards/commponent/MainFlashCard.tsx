@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   Eye,
   Edit2,
@@ -8,22 +8,95 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
+  Search,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import FlashCardNewAddModal from "../common/FlashCardNewAddModal";
 import FlashCardEditModal from "../common/FlashCardEditModal";
 import FlashCardViewModal from "../common/FlashCardViewModal";
 
 import { FlashCard } from "../types/flashCardType";
-import { useDeleteFlashcard, useFlashcards } from "../hooks/useFlashcard";
+import {
+  useDeleteFlashcard,
+  useFlashcards,
+  useTopicsForFilter,
+} from "../hooks/useFlashcard";
+import type { FlashcardFilters } from "../api/flashcard";
+
+const ACUITY_OPTIONS = ["Acute", "Chronic", "Acute, Chronic"];
+const AGE_GROUP_OPTIONS = [
+  "All Ages",
+  "Adult",
+  "Pediatric/Adolescent",
+  "Geriatric",
+];
 
 const MainFlashCard = () => {
   const [page, setPage] = useState(1);
   const limit = 8;
-  const { data, isLoading, isError } = useFlashcards(page, limit);
+
+  /* ── filter state ── */
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");
+  const [filterByAcuity, setFilterByAcuity] = useState("");
+  const [filterByAgeGroup, setFilterByAgeGroup] = useState("");
+  const [filterBytopicId, setFilterBytopicId] = useState("");
+  const [selectedTopicName, setSelectedTopicName] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [topicsPage, setTopicsPage] = useState(1);
+
+  const filters: FlashcardFilters = {
+    ...(search && { search }),
+    ...(status && { status }),
+    ...(filterByAcuity && { filterByAcuity }),
+    ...(filterByAgeGroup && { filterByAgeGroup }),
+    ...(filterBytopicId && { filterBytopicId }),
+    ...(sortBy && { sortBy }),
+  };
+
+  const { data, isLoading, isError } = useFlashcards(page, limit, filters);
+  const { data: topicsData } = useTopicsForFilter(topicsPage, 10);
   const deleteMutation = useDeleteFlashcard();
+
+  const topics = topicsData?.data ?? [];
+  const topicsTotalPages = topicsData?.meta?.pages ?? 1;
+
+  /* reset to page 1 whenever a filter changes */
+  const handleFilterChange = useCallback((cb: () => void) => {
+    cb();
+    setPage(1);
+  }, []);
+
+  const clearFilters = () => {
+    setSearch("");
+    setStatus("");
+    setFilterByAcuity("");
+    setFilterByAgeGroup("");
+    setFilterBytopicId("");
+    setSelectedTopicName("");
+    setSortBy("");
+    setTopicsPage(1);
+    setPage(1);
+  };
+
+  const hasActiveFilters =
+    !!search ||
+    !!status ||
+    !!filterByAcuity ||
+    !!filterByAgeGroup ||
+    !!filterBytopicId ||
+    !!sortBy;
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -77,7 +150,7 @@ const MainFlashCard = () => {
   return (
     <div className="w-full">
       <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-bold text-gray-800">Flashcards</h2>
           <Button
             onClick={() => setIsAddModalOpen(true)}
@@ -85,6 +158,188 @@ const MainFlashCard = () => {
           >
             <Plus size={18} /> Add New
           </Button>
+        </div>
+
+        {/* ── Filter bar ── */}
+        <div className="mb-6 space-y-3">
+          {/* Row 1: search */}
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              />
+              <Input
+                placeholder="Search flashcards…"
+                value={search}
+                onChange={(e) =>
+                  handleFilterChange(() => setSearch(e.target.value))
+                }
+                className="pl-9 border-gray-200 focus-visible:ring-[#2EB8A3]"
+              />
+              {search && (
+                <button
+                  onClick={() => handleFilterChange(() => setSearch(""))}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {hasActiveFilters && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={clearFilters}
+                className="text-gray-500 hover:text-red-500 gap-1.5"
+              >
+                <X size={14} /> Clear filters
+              </Button>
+            )}
+          </div>
+
+          {/* Row 2: dropdowns */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Status */}
+            <Select
+              value={status || "__all__"}
+              onValueChange={(v) =>
+                handleFilterChange(() => setStatus(v === "__all__" ? "" : v))
+              }
+            >
+              <SelectTrigger className="w-36 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+
+            {/* Acuity */}
+            <Select
+              value={filterByAcuity || "__all__"}
+              onValueChange={(v) =>
+                handleFilterChange(() =>
+                  setFilterByAcuity(v === "__all__" ? "" : v),
+                )
+              }
+            >
+              <SelectTrigger className="w-44 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Acuity" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All acuity</SelectItem>
+                {ACUITY_OPTIONS.map((a) => (
+                  <SelectItem key={a} value={a}>
+                    {a}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Age Group */}
+            <Select
+              value={filterByAgeGroup || "__all__"}
+              onValueChange={(v) =>
+                handleFilterChange(() =>
+                  setFilterByAgeGroup(v === "__all__" ? "" : v),
+                )
+              }
+            >
+              <SelectTrigger className="w-48 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Age Group" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All age groups</SelectItem>
+                {AGE_GROUP_OPTIONS.map((ag) => (
+                  <SelectItem key={ag} value={ag}>
+                    {ag}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Topic */}
+            <Select
+              value={filterBytopicId || "__all__"}
+              onValueChange={(v) => {
+                if (v === "__all__") {
+                  handleFilterChange(() => {
+                    setFilterBytopicId("");
+                    setSelectedTopicName("");
+                  });
+                } else {
+                  const topic = topics.find((t) => t._id === v);
+                  handleFilterChange(() => {
+                    setFilterBytopicId(v);
+                    setSelectedTopicName(topic?.Name ?? v);
+                  });
+                }
+              }}
+            >
+              <SelectTrigger className="w-52 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Topic">
+                  {filterBytopicId
+                    ? selectedTopicName || filterBytopicId
+                    : "All topics"}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {/* pagination header */}
+                <div className="flex items-center justify-between px-2 py-1.5 border-b border-gray-100">
+                  <button
+                    disabled={topicsPage === 1}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setTopicsPage((p) => Math.max(1, p - 1));
+                    }}
+                    className="p-1 rounded hover:bg-gray-100 disabled:opacity-30"
+                  >
+                    <ChevronLeft size={14} />
+                  </button>
+                  <span className="text-xs text-gray-500">
+                    Page {topicsPage} / {topicsTotalPages}
+                  </span>
+                  <button
+                    disabled={topicsPage >= topicsTotalPages}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setTopicsPage((p) => Math.min(topicsTotalPages, p + 1));
+                    }}
+                    className="p-1 rounded hover:bg-gray-100 disabled:opacity-30"
+                  >
+                    <ChevronRight size={14} />
+                  </button>
+                </div>
+                <SelectItem value="__all__">All topics</SelectItem>
+                {topics.map((t) => (
+                  <SelectItem key={t._id} value={t._id}>
+                    {t.Name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Sort */}
+            <Select
+              value={sortBy || "__none__"}
+              onValueChange={(v) =>
+                handleFilterChange(() => setSortBy(v === "__none__" ? "" : v))
+              }
+            >
+              <SelectTrigger className="w-40 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">Default order</SelectItem>
+                <SelectItem value="asc">Ascending</SelectItem>
+                <SelectItem value="dessce">Descending</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <div className="overflow-x-auto">

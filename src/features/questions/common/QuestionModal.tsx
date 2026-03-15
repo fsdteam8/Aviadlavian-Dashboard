@@ -25,13 +25,14 @@ import {
   useUpdateQuestion,
   useSingleQuestion,
 } from "../hooks";
-import { useTopicsDropdown } from "@/features/articales/hooks/useTopicsDropdown";
 import { useArticles } from "@/features/articales/hooks/useArticles";
 import {
   CreateQuestionPayload,
   UpdateQuestionPayload,
 } from "../type/question.types";
 import { Checkbox } from "@/components/ui/checkbox";
+import RichTextEditor from "@/features/articales/common/RichTextEditor";
+import { Plus, Trash2 } from "lucide-react";
 
 interface QuestionModalProps {
   isOpen: boolean;
@@ -57,7 +58,6 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     isEdit && !!questionId,
   );
 
-  const { data: topicsData, isLoading: isLoadingTopics } = useTopicsDropdown();
   // Fetching a larger limit to ensure all articles fit in the dropdown without pagination for now
   const { data: articlesData, isLoading: isLoadingArticles } = useArticles(
     1,
@@ -77,6 +77,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     questionText: "",
     options: defaultOptions,
     explanation: "",
+    keyPoints: [""],
     marks: 1,
     difficulty: "easy",
     isHidden: false,
@@ -94,6 +95,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         questionText: q.questionText || "",
         options: q.options && q.options.length > 0 ? q.options : defaultOptions,
         explanation: q.explanation || "",
+        keyPoints: q.keyPoints && q.keyPoints.length > 0 ? q.keyPoints : [""],
         marks: q.marks || 1,
         difficulty: q.difficulty || "easy",
         isHidden: q.isHidden || false,
@@ -106,6 +108,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         questionText: "",
         options: defaultOptions,
         explanation: "",
+        keyPoints: [""],
         marks: 1,
         difficulty: "easy",
         isHidden: false,
@@ -139,10 +142,6 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     setFormData((prev) => ({ ...prev, options: newOptions }));
   };
 
-  const handleTopicSelect = (value: string) => {
-    setFormData((prev) => ({ ...prev, topicId: value }));
-  };
-
   const handleArticleSelect = (value: string) => {
     // If selecting 'none', store empty string
     setFormData((prev) => ({
@@ -151,13 +150,28 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     }));
   };
 
+  const handleAddKeyPoint = () => {
+    setFormData((prev) => ({
+      ...prev,
+      keyPoints: [...prev.keyPoints, ""],
+    }));
+  };
+
+  const handleRemoveKeyPoint = (index: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      keyPoints: prev.keyPoints.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleKeyPointChange = (index: number, value: string) => {
+    const newKeyPoints = [...formData.keyPoints];
+    newKeyPoints[index] = value;
+    setFormData((prev) => ({ ...prev, keyPoints: newKeyPoints }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.topicId) {
-      toast.error("Please select a Topic ID.");
-      return;
-    }
 
     // Validate options
     const filledOptions = formData.options.filter((o) => o.text.trim() !== "");
@@ -180,6 +194,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         questionText: formData.questionText,
         options: formData.options,
         explanation: formData.explanation,
+        keyPoints: formData.keyPoints.filter((kp) => kp.trim() !== ""),
         marks: formData.marks,
         difficulty: formData.difficulty,
         isHidden: formData.isHidden,
@@ -201,6 +216,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         questionText: formData.questionText,
         options: formData.options,
         explanation: formData.explanation,
+        keyPoints: formData.keyPoints.filter((kp) => kp.trim() !== ""),
         marks: formData.marks,
         difficulty: formData.difficulty,
       };
@@ -233,45 +249,24 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
           <form onSubmit={handleSubmit} className="space-y-6 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="mb-2">Topic ID *</Label>
-                <Select
-                  value={formData.topicId}
-                  onValueChange={handleTopicSelect}
-                  disabled={isLoadingTopics}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Topic ID" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {topicsData?.data?.map((topic) => (
-                      <SelectItem
-                        key={topic._id}
-                        value={topic.Primary_Body_Region}
-                      >
-                        {topic.Primary_Body_Region} - {topic.Name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
                 <Label className="mb-2">Article ID (Optional)</Label>
                 <Select
                   value={formData.articleId || "none"}
                   onValueChange={handleArticleSelect}
                   disabled={isLoadingArticles}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full flex items-center justify-between truncate">
                     <SelectValue placeholder="Select Article (Optional)" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[300px]">
                     <SelectItem value="none">
                       <span className="text-slate-500 italic">None</span>
                     </SelectItem>
                     {articlesData?.data?.map((article) => (
                       <SelectItem key={article._id} value={article._id}>
-                        {article.name}
+                        <span className="truncate">
+                          {(article.name || "").replace(/<[^>]*>/g, "")}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -295,15 +290,23 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
 
               <div>
                 <Label className="mb-2" htmlFor="difficulty">
-                  Difficulty
+                  Difficulty *
                 </Label>
-                <Input
-                  id="difficulty"
-                  name="difficulty"
-                  placeholder="easy, medium, hard"
+                <Select
                   value={formData.difficulty}
-                  onChange={handleInputChange}
-                />
+                  onValueChange={(val) =>
+                    setFormData((prev) => ({ ...prev, difficulty: val }))
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Difficulty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="easy">Easy</SelectItem>
+                    <SelectItem value="medium">Medium</SelectItem>
+                    <SelectItem value="hard">Hard</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -357,18 +360,78 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
             </div>
 
             <div>
-              <Label className="mb-2" htmlFor="explanation">
+              <Label className="mb-2 font-semibold" htmlFor="explanation">
                 Explanation *
               </Label>
-              <Textarea
-                id="explanation"
-                name="explanation"
+              <RichTextEditor
+                content={formData.explanation}
+                onChange={(html) =>
+                  setFormData((prev) => ({ ...prev, explanation: html }))
+                }
                 placeholder="Why is this the correct answer?"
-                value={formData.explanation}
-                onChange={handleInputChange}
-                rows={2}
-                required
               />
+            </div>
+
+            <div className="space-y-4">
+              <Label className="font-semibold text-teal-700 dark:text-teal-400 flex items-center gap-2">
+                <Plus size={16} /> Key Study Points
+              </Label>
+              <div className="space-y-3">
+                {formData.keyPoints.map((point, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2 duration-300"
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-xs font-bold text-teal-600 border border-teal-100 shadow-sm">
+                      {index + 1}
+                    </div>
+                    <Input
+                      placeholder={`Enter key point ${index + 1}...`}
+                      value={point}
+                      onChange={(e) =>
+                        handleKeyPointChange(index, e.target.value)
+                      }
+                      className="flex-1 h-10 focus-visible:ring-teal-500 hover:border-teal-200 transition-all"
+                    />
+                    <div className="flex items-center gap-1">
+                      {index === formData.keyPoints.length - 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={handleAddKeyPoint}
+                          className="h-10 w-10 text-teal-600 border-teal-200 hover:bg-teal-50 transition-colors shadow-sm"
+                          title="Add new point"
+                        >
+                          <Plus size={18} />
+                        </Button>
+                      )}
+                      {formData.keyPoints.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveKeyPoint(index)}
+                          className="h-10 w-10 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                          title="Remove point"
+                        >
+                          <Trash2 size={18} />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {formData.keyPoints.length === 0 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddKeyPoint}
+                  className="w-full py-6 border-dashed border-teal-200 text-teal-600 hover:bg-teal-50"
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Add your first key point
+                </Button>
+              )}
             </div>
 
             {isEdit && (

@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   getAllFlashcards,
   getinjuryFilterOptions,
@@ -6,13 +11,29 @@ import {
   createFlashcard,
   updateFlashcard,
   deleteFlashcard,
+  getTopicsForFilter,
+  type FlashcardFilters,
 } from "../api/flashcard";
 import { toast } from "sonner";
 
-export const useFlashcards = (page: number = 1, limit: number = 5) => {
+export const useFlashcards = (
+  page: number = 1,
+  limit: number = 8,
+  filters: FlashcardFilters = {},
+) => {
   return useQuery({
-    queryKey: ["flashcards", page, limit],
-    queryFn: () => getAllFlashcards(page, limit),
+    queryKey: ["flashcards", page, limit, filters],
+    queryFn: () => getAllFlashcards(page, limit, filters),
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useTopicsForFilter = (page: number = 1, limit: number = 10) => {
+  return useQuery({
+    queryKey: ["topics-filter", page, limit],
+    queryFn: () => getTopicsForFilter(page, limit),
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
   });
 };
 

@@ -113,7 +113,7 @@ const AllArticles = () => {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-            Articles
+            Library
           </h1>
         </div>
 

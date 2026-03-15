@@ -37,7 +37,7 @@ type MenuItem = {
 const menuItems: MenuItem[] = [
   { label: "Dashboard", icon: Home, url: "/" },
   { label: "Topics", icon: Library, url: "/topics" },
-  { label: "Articles", icon: Info, url: "/articles" },
+  { label: "Library", icon: Info, url: "/articles" },
   { label: "Question & Answer", icon: SquareKanban, url: "/questionbank" },
   { label: "Flashcards", icon: FileText, url: "/flashcards" },
   { label: "Users", icon: Sparkles, url: "/users" },
