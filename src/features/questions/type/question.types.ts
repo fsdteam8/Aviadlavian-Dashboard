@@ -14,6 +14,7 @@ export interface IQuestion {
   totalAttempts?: number;
   correctAttempts?: number;
   explanation: string;
+  keyPoints?: string[];
   marks: number;
   difficulty?: string;
   isHidden: boolean;
@@ -46,6 +47,7 @@ export interface CreateQuestionPayload {
   questionText: string;
   options: { text: string; isCorrect: boolean }[];
   explanation: string;
+  keyPoints?: string[];
   marks: number;
   difficulty?: string;
 }
@@ -63,6 +65,7 @@ export interface UpdateQuestionPayload {
   questionText?: string;
   options?: { text: string; isCorrect: boolean }[];
   explanation?: string;
+  keyPoints?: string[];
   marks?: number;
   difficulty?: string;
   isHidden?: boolean;
