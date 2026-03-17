@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Search, Trash2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -17,10 +18,13 @@ import ViewArticleModal from "../common/ViewArticleModal";
 import EditArticleModal from "../common/EditArticleModal";
 import { useArticles } from "../hooks/useArticles";
 import { useDeleteArticle } from "../hooks/useDeleteArticle";
+import { useDebounce } from "@/hooks/use-debounce";
 import { toast } from "sonner";
 
 const AllArticles = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const limit = 10;
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -35,7 +39,11 @@ const AllArticles = () => {
   );
 
   // Use TanStack Query hooks
-  const { data, isLoading, refetch } = useArticles(currentPage, limit);
+  const { data, isLoading, refetch } = useArticles(
+    currentPage,
+    limit,
+    debouncedSearch,
+  );
   const deleteArticleMutation = useDeleteArticle();
 
   const articles = data?.data || [];
@@ -119,15 +127,37 @@ const AllArticles = () => {
 
         {/* Article Name and Add Button */}
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">
+          {/* <h2 className="text-lg font-medium text-slate-900 dark:text-slate-100">
             Article Name
-          </h2>
-          <Button
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-teal-500 hover:bg-teal-600 text-white"
-          >
-            +Add Article
-          </Button>
+          </h2> */}
+          <div className="flex flex-col sm:flex-row gap-4 flex-1 justify-end items-center">
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Input
+                placeholder="Search articles..."
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="pl-9 pr-9 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            <Button
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-teal-500 hover:bg-teal-600 text-white w-full sm:w-auto"
+            >
+              +Add Article
+            </Button>
+          </div>
         </div>
 
         {/* All Articles Section */}

@@ -41,10 +41,12 @@ export interface ArticlesResponse {
 export const getAllArticles = async (
   page: number = 1,
   limit: number = 10,
+  search?: string,
 ): Promise<ArticlesResponse> => {
-  const response = await api.get(
-    `/article/get-all?page=${page}&limit=${limit}`,
-  );
+  const url = search
+    ? `/article/get-all?page=${page}&limit=${limit}&search=${search}`
+    : `/article/get-all?page=${page}&limit=${limit}`;
+  const response = await api.get(url);
   return response.data;
 };
 

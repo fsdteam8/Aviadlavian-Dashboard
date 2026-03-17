@@ -33,7 +33,7 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <RouteAccessToast />
         </Suspense>
-        <Toaster position="top-right" closeButton />
+        <Toaster position="top-right" closeButton richColors />
       </body>
     </html>
   );
