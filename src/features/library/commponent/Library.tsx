@@ -103,7 +103,7 @@ import { motion } from "framer-motion";
 const Library = () => {
   const { data, isLoading, isError, error } = useLibrary({
     page: 1,
-    limit: 50,
+    limit: 10,
   });
 
   const grouped = React.useMemo(() => {
