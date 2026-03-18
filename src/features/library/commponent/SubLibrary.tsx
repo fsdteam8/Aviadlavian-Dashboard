@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import React from "react";
 import { ChevronRight, CirclePlay, PencilLine } from "lucide-react";
@@ -93,7 +95,7 @@ const SubLibrary = ({ libraryId }: SubLibraryProps) => {
           <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
             {data.sectionTitle}
           </h2>
-          <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+          <div className="mt-1 text-xs text-slate-600 dark:text-slate-300">
             <span className="text-emerald-700 dark:text-emerald-400">
               {data.category}
             </span>
@@ -101,7 +103,7 @@ const SubLibrary = ({ libraryId }: SubLibraryProps) => {
             <span>{data.topic}</span>
             <span className="px-1">›</span>
             <span>{data.selectedChapterTitle}</span>
-          </p>
+          </div>
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800/60">
