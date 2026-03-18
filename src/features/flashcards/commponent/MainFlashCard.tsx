@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from "react";
 import {
   Eye,
-  Edit2,
+  Pencil,
   Trash2,
   Plus,
   ChevronLeft,
@@ -42,6 +42,24 @@ const AGE_GROUP_OPTIONS = [
   "Geriatric",
 ];
 
+/**
+ * Utility to parse and clean values from data (handles arrays, comma-separated strings, etc.)
+ */
+const parseValues = (val: string | string[] | undefined): string[] => {
+  if (!val) return [];
+  if (Array.isArray(val)) {
+    return val.flatMap((v) => parseValues(v));
+  }
+  if (typeof val === "string") {
+    // Split by common delimiters: comma, slash, or pipe
+    return val
+      .split(/[,/|]/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  }
+  return [String(val)];
+};
+
 const MainFlashCard = () => {
   const [page, setPage] = useState(1);
   const limit = 8;
@@ -53,6 +71,8 @@ const MainFlashCard = () => {
   const [filterByAgeGroup, setFilterByAgeGroup] = useState("");
   const [filterBytopicId, setFilterBytopicId] = useState("");
   const [selectedTopicName, setSelectedTopicName] = useState("");
+  const [filterBySpeciality, setFilterBySpeciality] = useState("");
+  const [filterByBodyArea, setFilterByBodyArea] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [topicsPage, setTopicsPage] = useState(1);
 
@@ -62,6 +82,8 @@ const MainFlashCard = () => {
     ...(filterByAcuity && { filterByAcuity }),
     ...(filterByAgeGroup && { filterByAgeGroup }),
     ...(filterBytopicId && { filterBytopicId }),
+    ...(filterBySpeciality && { speciality: filterBySpeciality }),
+    ...(filterByBodyArea && { bodyArea: filterByBodyArea }),
     ...(sortBy && { sortBy }),
   };
 
@@ -85,6 +107,8 @@ const MainFlashCard = () => {
     setFilterByAgeGroup("");
     setFilterBytopicId("");
     setSelectedTopicName("");
+    setFilterBySpeciality("");
+    setFilterByBodyArea("");
     setSortBy("");
     setTopicsPage(1);
     setPage(1);
@@ -96,6 +120,8 @@ const MainFlashCard = () => {
     !!filterByAcuity ||
     !!filterByAgeGroup ||
     !!filterBytopicId ||
+    !!filterBySpeciality ||
+    !!filterByBodyArea ||
     !!sortBy;
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -136,16 +162,39 @@ const MainFlashCard = () => {
     }
   };
 
+  const flashcards = React.useMemo(() => data?.data ?? [], [data?.data]);
+  const meta = data?.meta;
+
+  /**
+   * Extract dynamic filter options from the current dataset
+   */
+  const specialities = React.useMemo(() => {
+    const s = new Set<string>();
+    flashcards.forEach((fc) => {
+      if (fc.topicId?.Name) s.add(fc.topicId.Name);
+    });
+    return Array.from(s).sort();
+  }, [flashcards]);
+
+  const bodyAreaOptions = React.useMemo(() => {
+    const s = new Set<string>();
+    flashcards.forEach((fc) => {
+      if (fc.topicId?.Primary_Body_Region) {
+        parseValues(fc.topicId.Primary_Body_Region).forEach((v) => s.add(v));
+      }
+      if (fc.topicId?.Secondary_Body_Region) {
+        parseValues(fc.topicId.Secondary_Body_Region).forEach((v) => s.add(v));
+      }
+    });
+    return Array.from(s).sort();
+  }, [flashcards]);
+
   if (isError)
     return (
       <div className="p-8 text-center text-red-500">
         Error loading flashcards.
       </div>
     );
-
-  const flashcards = data?.data || [];
-  const meta = data?.meta;
-  // console.log('meta',meta)
 
   return (
     <div className="w-full">
@@ -323,6 +372,50 @@ const MainFlashCard = () => {
               </SelectContent>
             </Select>
 
+            {/* Speciality Filter - Dynamically Extracted */}
+            <Select
+              value={filterBySpeciality || "__all__"}
+              onValueChange={(v) =>
+                handleFilterChange(() =>
+                  setFilterBySpeciality(v === "__all__" ? "" : v),
+                )
+              }
+            >
+              <SelectTrigger className="w-44 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Speciality" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All specialities</SelectItem>
+                {specialities.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Body Area Filter - Dynamically Extracted & Normalized */}
+            <Select
+              value={filterByBodyArea || "__all__"}
+              onValueChange={(v) =>
+                handleFilterChange(() =>
+                  setFilterByBodyArea(v === "__all__" ? "" : v),
+                )
+              }
+            >
+              <SelectTrigger className="w-48 border-gray-200 focus:ring-[#2EB8A3]">
+                <SelectValue placeholder="Body Area" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All body areas</SelectItem>
+                {bodyAreaOptions.map((ba) => (
+                  <SelectItem key={ba} value={ba}>
+                    {ba}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             {/* Sort */}
             <Select
               value={sortBy || "__none__"}
@@ -402,25 +495,25 @@ const MainFlashCard = () => {
                         <div className="flex justify-center items-center gap-3">
                           <button
                             onClick={() => handleView(fc)}
-                            className="p-2 text-gray-400 hover:text-[#2EB8A3] transition-colors"
+                            className="text-teal-500 hover:text-teal-600 transition-colors"
                             title="View"
                           >
-                            <Eye size={18} />
+                            <Eye className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleEdit(fc)}
-                            className="p-2 text-gray-400 hover:text-blue-500 transition-colors"
+                            className="text-teal-500 hover:text-teal-600 transition-colors"
                             title="Edit"
                           >
-                            <Edit2 size={18} />
+                            <Pencil className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleDelete(fc._id)}
                             disabled={deleteMutation.isPending}
-                            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                            className="text-red-500 hover:text-red-600 transition-colors"
                             title="Delete"
                           >
-                            <Trash2 size={18} />
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         </div>
                       </td>
