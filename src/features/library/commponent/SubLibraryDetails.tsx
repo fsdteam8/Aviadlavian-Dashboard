@@ -107,15 +107,6 @@ const SubLibraryDetails = ({
       try {
         // Simulate fetch call
         console.log("Saving highlight to backend:", highlight);
-        // await fetch('/api/highlights', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({
-        //     libraryId,
-        //     chapterId,
-        //     highlight
-        //   })
-        // });
       } catch (error) {
         console.error("Failed to save highlight:", error);
       }
