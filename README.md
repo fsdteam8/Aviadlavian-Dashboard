@@ -1,514 +1,179 @@
-# 🚀 Next.js Full-Stack Template
+# Aviad Lavian Dashboard - Medical Education Platform
 
-A production-ready, opinionated **Next.js 16** template with a clean feature-driven architecture, authentication, typed API layer, and developer tooling pre-configured out of the box.
-
----
-
-## 📋 Table of Contents
-
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Authentication](#authentication)
-- [API Layer](#api-layer)
-- [Feature Pattern](#feature-pattern)
-- [State Management](#state-management)
-- [Routing & Middleware](#routing--middleware)
-- [UI Components](#ui-components)
-- [Developer Tooling](#developer-tooling)
-- [Scripts Reference](#scripts-reference)
-- [Commit Convention](#commit-convention)
+A professional, high-performance medical education dashboard built with Next.js 16 and React 19. This platform provides advanced tools for managing medical knowledge, including a dynamic library, interactive flashcards with difficulty tracking, and a robust question bank system.
 
 ---
 
-## 🧰 Tech Stack
+## 🚀 1. Project Overview
 
-| Category         | Library / Tool                                 | Version        |
-| ---------------- | ---------------------------------------------- | -------------- |
-| Framework        | [Next.js](https://nextjs.org/)                 | 16.1.4         |
-| Language         | TypeScript                                     | ^5             |
-| Styling          | Tailwind CSS                                   | ^4             |
-| UI Components    | [Shadcn UI](https://ui.shadcn.com/) + Radix UI | Latest         |
-| Icons            | Lucide React                                   | ^0.553.0       |
-| Authentication   | [NextAuth.js](https://next-auth.js.org/)       | ^4.24          |
-| Data Fetching    | Axios + TanStack Query                         | ^1.13 / ^5.90  |
-| Forms            | React Hook Form + Zod                          | ^7.66 / ^3.25  |
-| State Management | Zustand                                        | ^5.0           |
-| Rich Text Editor | Tiptap                                         | ^3.17          |
-| Animations       | Framer Motion                                  | ^12            |
-| Notifications    | Sonner                                         | ^2.0           |
-| Testing          | Jest + Testing Library                         | ^30            |
-| Linting          | ESLint + Prettier                              | ^9 / ^3        |
-| Commit Hooks     | Husky + Lint-staged + Commitlint               | ^8 / ^16 / ^20 |
+This project is a comprehensive administrative and educational dashboard designed to manage medical articles, topics, and study materials. It enables educators and students to organize medical knowledge through:
+
+- **Article Management**: Full CRUD operations for medical articles with rich text editing.
+- **Knowledge Library**: A dynamic repository for browsing medical topics with multi-layered filtering.
+- **Flashcard System**: An interactive learning tool with difficulty-based categorization and dynamic discovery of body regions and specialities.
+- **Question Bank**: A centralized database of medical questions linked to specific topics and articles.
+- **Analytical Repository**: A sophisticated filtering system that automatically analyzes datasets to provide intelligent search categories.
 
 ---
 
-## 📁 Project Structure
+## 🛠 2. Tech Stack
 
-```
-src/
-├── app/                        # Next.js App Router
-│   ├── api/
-│   │   └── auth/
-│   │       └── [...nextauth]/  # NextAuth route handler
-│   │           └── route.ts
-│   ├── layout.tsx              # Root layout with global providers
-│   ├── page.tsx                # Home page
-│   ├── globals.css             # Global styles
-│   └── not-found.tsx           # Custom 404 page
-│
-├── Providers/
-│   ├── MainProviders.tsx       # TanStack Query client provider
-│   └── Provider.tsx            # NextAuth SessionProvider
-│
-├── components/
-│   ├── ui/                     # Shadcn UI primitives (Button, Input, Dialog, etc.)
-│   └── shared/                 # Cross-feature shared components
-│
-├── features/
-│   ├── auth/
-│   │   └── api/
-│   │       └── refresh-token.api.ts  # Token refresh used by NextAuth
-│   └── sample-feature/         # Reference architecture — copy this for new features
-│       ├── api/                # API call functions (uses src/lib/api.ts)
-│       ├── components/         # Feature-specific UI components
-│       ├── hooks/              # TanStack Query custom hooks
-│       └── types.ts            # Feature TypeScript types
-│
-├── hooks/                      # Global reusable hooks
-│   └── readme.md
-│
-├── lib/
-│   ├── api.ts                  # Axios instance with auth interceptors
-│   ├── utils.ts                # Utility functions (cn, etc.)
-│   ├── indexed-db-storage.ts   # IndexedDB helpers
-│   └── readme.md
-│
-├── store/
-│   ├── ui.store.ts             # Global UI state (Zustand)
-│   └── readme.md
-│
-├── types/
-│   ├── next-auth.d.ts          # Extended NextAuth TypeScript types
-│   └── readme.md
-│
-├── tests/                      # Jest unit test files
-│
-└── proxy.ts                    # Next.js middleware for RBAC routing
+- **Framework**: [Next.js 16 (App Router)](https://nextjs.org/)
+- **UI Library**: [React 19](https://react.dev/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **State Management**: [Zustand](https://docs.pmnd.rs/zustand/getting-started/introduction) & [Zod](https://zod.dev/) (Validation)
+- **Data Fetching**: [TanStack Query v5](https://tanstack.com/query/latest) (React Query)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/) & [shadcn/ui](https://ui.shadcn.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Forms**: [React Hook Form](https://react-hook-form.com/)
+- **Auth**: [NextAuth.js](https://next-auth.js.org/)
+- **Editor**: [Tiptap](https://tiptap.dev/)
+
+---
+
+## 📂 3. Project Structure
+
+The project follows a **Feature-Based Modular Architecture**, which ensures scalability and high maintainability.
+
+```text
+/src
+├── app/                  # Next.js App Router (Pages, Layouts, Routing)
+├── components/           # UI Components
+│   ├── ui/               # Primitive shadcn/ui components
+│   └── shared/           # Reusable business-level components (Header, Sidebar)
+├── features/             # Business Logic & Feature-specific Modules
+│   ├── articales/        # Article management logic (CRUD, Table view)
+│   ├── flashcards/       # Interactive learning tools and progress tracking
+│   ├── library/          # Topic repository and deep-filtering system
+│   ├── auth/             # Authentication flows
+│   └── questions/        # Question bank and examination logic
+├── hooks/                # Global custom React hooks
+├── lib/                  # Shared utilities (API Axios instance, helper functions)
+├── store/                # Zustand global state stores
+├── types/                # Global TypeScript declarations
+└── globals.css           # Global styles and design system variables
 ```
 
 ---
 
-## ⚡ Getting Started
+## 📄 4. Page-by-Page Explanation
 
-### Prerequisites
+### **Dashboard Overview**
 
-- Node.js 18+
-- npm or pnpm
+- **Purpose**: High-level metrics and statistics.
+- **Data**: Connects to multiple analytical endpoints to show recent activity and progress.
 
-### 1. Clone the repository
+### **Article Inventory**
 
-```bash
-git clone <your-repo-url>
-cd <project-folder>
-```
+- **Purpose**: Manage the core library data.
+- **Features**: Search, Table-based management, and Modals for Add/Edit/View.
+- **UI Design**: Inspired by the Flashcard module, offering a clean, professional table view.
 
-### 2. Install dependencies
+### **Knowledge Library**
+
+- **Purpose**: Student-facing or research-facing topic explorer.
+- **Connects to**: `/article/get-all` through the `useLibrary` hook.
+- **Interactions**: Dynamic filtering by Body Area, Speciality, and Acuity.
+
+### **Flashcards Manager**
+
+- **Purpose**: Interactive study cards.
+- **Features**: Difficulty filters (Easy, Medium, Hard), Category filters (Acuity, Age Group).
+- **Data Flow**: Fetches flashcards with progress metadata; allows instant filtering of categories extracted from the current dataset.
+
+---
+
+## 🔄 5. Component & Function Flow
+
+We use a **Hook-to-UI** pattern for data movement:
+
+1.  **API Layer** (`src/features/[feature]/api`): Defines raw `axios` calls using a centralized `api` instance from `lib/api`.
+2.  **Hook Layer** (`src/features/[feature]/hooks`): Wraps API calls in TanStack Query (`useQuery`, `useMutation`) for caching and lifecycle management.
+3.  **UI Content** (`src/features/[feature]/component`):
+    - Consume hooks to get `data`, `isLoading`, and `error`.
+    - Handle local UI state (filtering selecting, search strings) using `useState`.
+    - **Optimization**: Uses `useMemo` to perform expensive filtering tasks or data transformations without unnecessary re-renders.
+
+**Example Flow: Filtering Articles**
+
+- User types in Search → `setSearch` updates state → `useDebounce` waits 500ms → `useArticles` hook triggers a new API request with `params`.
+- Server returns data → Component's `dynamicFilters` logic scans the `topicIds` → Dropdowns automatically populate with new unique options found in the results.
+
+---
+
+## ✨ 6. Feature Breakdown
+
+### **Dynamic Discovery Filters**
+
+Unlike traditional hardcoded filters, this project implements **Auto-Discovery Logic**. The system "scans" the incoming data to find all unique Specialities and Body Regions.
+
+- **Multi-select support**: Filter by multiple regions simultaneously.
+- **Normalization**: Automatically handles combined values like `"Shoulder/Arm"` or `"Knee, Ankle"` by splitting them into individual tags.
+
+### **Flashcard Logic**
+
+- Cards are categorized into 3 difficulty levels.
+- System allows filtering by `Topic`, `Acuity`, and `Age Group`.
+- Features a "Study Mode" where progress is tracked against the user profile.
+
+---
+
+## 🔌 7. API Integration
+
+API logic is centralized in the `lib/api.ts` file, featuring:
+
+- **Axios Instance**: Configured with baseURL and timeout.
+- **Interceptors**: Handles auth tokens and global error responses.
+- **Type Safety**: Every API call uses defined TypeScript interfaces for Request and Response objects.
+
+---
+
+## 💾 8. State Management
+
+- **Server State**: Managed by **TanStack Query**. It handles all caching, loading states, and background synchronization.
+- **Local State**: Managed by **React Hooks** (`useState`, `useReducer`) for things like modal toggles and filter selections.
+- **Global Settings**: Handled via **Zustand** stores in `/src/store` for cross-feature needs like user preferences or sidebar collapse state.
+
+---
+
+## 🚀 9. How to Run the Project
+
+### **Prerequisites**
+
+- Node.js (v18 or higher recommended)
+- npm or yarn
+
+### **Installation**
+
+1. Clone the repository.
 
 ```bash
 npm install
 ```
 
-### 3. Set up environment variables
+### **Environment Setup**
 
-```bash
-cp example.env.local .env.local
+Create a `.env` file in the root directory:
+
+```env
+NEXT_PUBLIC_BASE_URL=https://your-api-url.com
+NEXTAUTH_SECRET=your_secret_here
 ```
 
-Edit `.env.local` with your actual values (see [Environment Variables](#environment-variables)).
+### **Commands**
 
-### 4. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+- **Development**: `npm run dev` (Runs on `http://localhost:3000`)
+- **Build**: `npm run build`
+- **Start Production**: `npm run start`
+- **Linting**: `npm run lint`
 
 ---
 
-## 🔑 Environment Variables
-
-Copy `example.env.local` to `.env.local` and fill in the following:
-
-| Variable                 | Required | Description                                                                                |
-| ------------------------ | -------- | ------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_API_URL`    | ✅       | Base URL of your backend REST API (e.g. `http://localhost:5001/api/v1`)                    |
-| `NEXTAUTH_SECRET`        | ✅       | A random secret string used to encrypt JWT sessions. Generate with: `openssl rand -hex 32` |
-| `NEXTAUTH_URL`           | ✅       | The canonical URL of your deployed app (e.g. `http://localhost:3000` for local)            |
-| `NEXT_PUBLIC_SOCKET_URL` | ⬜       | Optional WebSocket server URL                                                              |
-
-> **Security**: Never commit your `.env.local` file. It is already listed in `.gitignore`.
-
----
-
-## 🔐 Authentication
-
-Authentication is handled via **NextAuth.js v4** using its **Credentials Provider** strategy.
-
-### How It Works
-
-1. The user submits their email and password.
-2. NextAuth calls your backend `POST /auth/login` endpoint.
-3. On success, the user object and `accessToken` are stored in a JWT session.
-4. The JWT is automatically refreshed when it expires (1 hour default), via `POST /auth/refresh-access-token`.
-5. If the refresh fails, the session is destroyed and the user is signed out.
-
-### Session Shape
-
-The session is extended to include custom fields. The types are declared in `src/types/next-auth.d.ts`:
-
-```typescript
-session.user = {
-  id: string;
-  name: string;
-  email: string;
-  image: string;    // Maps to profileImage from backend
-  role: string;     // e.g. "ADMIN" | "USER"
-};
-session.accessToken  = string;
-session.refreshToken = string;
-```
-
-### Accessing the Session
-
-**Client-side (in a Client Component):**
-
-```tsx
-"use client";
-import { useSession } from "next-auth/react";
-
-export default function MyComponent() {
-  const { data: session } = useSession();
-  // session.accessToken, session.user.role, etc.
-}
-```
-
-**Server-side (in a Server Component or API Route):**
-
-```tsx
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-
-const session = await getServerSession(authOptions);
-```
-
----
-
-## 🌐 API Layer
-
-All HTTP requests go through the centralized **Axios instance** at `src/lib/api.ts`.
-
-### Features
-
-- **Auto-auth injection**: Every request automatically includes the `Bearer` token from the active NextAuth session.
-- **Auto-retry on 401**: If a request fails with a 401, it tries to use the refreshed token from the session and retries once.
-- **Auto-signout**: If the token refresh has failed (`RefreshAccessTokenError`), the user is immediately signed out and redirected to `/login`.
-
-### Usage
-
-```typescript
-import { api } from "@/lib/api";
-
-// Example GET request
-const response = await api.get("/users");
-
-// Example POST request
-const response = await api.post("/users", { name: "John" });
-```
-
-> **Note**: You never need to manually set `Authorization` headers. The interceptor handles it globally.
-
----
-
-## 🧩 Feature Pattern
-
-All business logic lives inside `src/features/`. Each feature is a self-contained module with a consistent internal structure. Use `src/features/sample-feature` as your starting point.
-
-### Structure
-
-```
-src/features/your-feature/
-├── api/
-│   └── your-feature.api.ts   # Raw API call functions
-├── components/
-│   └── YourComponent.tsx     # Feature UI components
-├── hooks/
-│   └── useYourFeature.ts     # TanStack Query hooks
-└── types.ts                  # TypeScript types for this feature
-```
-
-### Step-by-Step: Adding a New Feature
-
-**1. Define your types** (`types.ts`):
-
-```typescript
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-```
-
-**2. Write your API function** (`api/users.api.ts`):
-
-```typescript
-import { api } from "@/lib/api";
-import { User } from "../types";
-
-export async function getUsers(): Promise<User[]> {
-  const res = await api.get("/users");
-  return res.data;
-}
-```
-
-**3. Create a TanStack Query hook** (`hooks/useUsers.ts`):
-
-```typescript
-import { useQuery } from "@tanstack/react-query";
-import { getUsers } from "../api/users.api";
-
-export function useUsers() {
-  return useQuery({
-    queryKey: ["users"],
-    queryFn: getUsers,
-  });
-}
-```
-
-**4. Consume in a component** (`components/UserList.tsx`):
-
-```tsx
-"use client";
-import { useUsers } from "../hooks/useUsers";
-
-export default function UserList() {
-  const { data, isLoading, error } = useUsers();
-
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error loading users.</p>;
-
-  return (
-    <ul>
-      {data?.map((user) => (
-        <li key={user.id}>{user.name}</li>
-      ))}
-    </ul>
-  );
-}
-```
-
-**5. Add a route** in `src/app/(your-group)/your-route/page.tsx` and import the component.
-
----
-
-## 🗂️ State Management
-
-Global UI state is managed with **Zustand** in `src/store/`.
-
-### Adding a New Store
-
-```typescript
-// src/store/example.store.ts
-import { create } from "zustand";
-
-interface ExampleState {
-  count: number;
-  increment: () => void;
-}
-
-export const useExampleStore = create<ExampleState>((set) => ({
-  count: 0,
-  increment: () => set((state) => ({ count: state.count + 1 })),
-}));
-```
-
-> **Convention**: Keep stores small and focused. One store per concern (e.g. `ui.store.ts`, `sidebar.store.ts`).
-
----
-
-## 🛡️ Routing & Middleware
-
-The `src/proxy.ts` file is a **Next.js Middleware** that runs at the edge before any page renders. It handles **Role-Based Access Control (RBAC)**.
-
-### Current Rules
-
-| Condition                                | Action                               |
-| ---------------------------------------- | ------------------------------------ |
-| Unauthenticated user visits `/dashboard` | Redirect to `/login?callbackUrl=...` |
-| Non-admin user visits `/dashboard`       | Redirect to `/`                      |
-| All other requests                       | `next()` — passes through            |
-
-### Customizing Routes
-
-Edit the matcher in `src/proxy.ts` to control which paths trigger the middleware:
-
-```typescript
-export const config = {
-  matcher: [
-    "/((?!api|_next/static|_next/image|assets|favicon.ico|sitemap.xml|robots.txt).*)",
-  ],
-};
-```
-
-### Adding Route Groups
-
-Create a folder with parentheses in `src/app/` to group routes without affecting the URL:
-
-```
-src/app/
-├── (dashboard)/
-│   └── dashboard/
-│       └── page.tsx    →  URL: /dashboard
-├── (auth)/
-│   └── login/
-│       └── page.tsx    →  URL: /login
-```
-
----
-
-## 🎨 UI Components
-
-All primitive UI components come from **Shadcn UI** and live in `src/components/ui/`.
-
-### Available Components
-
-| Component       | Description                                          |
-| --------------- | ---------------------------------------------------- |
-| `Button`        | Multi-variant button (default, outline, ghost, etc.) |
-| `Input`         | Styled form input                                    |
-| `Label`         | Accessible form label                                |
-| `Dialog`        | Modal dialog                                         |
-| `Select`        | Dropdown select                                      |
-| `Checkbox`      | Accessible checkbox                                  |
-| `Avatar`        | User avatar with fallback                            |
-| `Dropdown Menu` | Context/dropdown menus                               |
-| `Accordion`     | Collapsible accordion panels                         |
-| And more...     | Run `npx shadcn add <component>` to add more         |
-
-### Adding a New Shadcn Component
-
-```bash
-npx shadcn add <component-name>
-# e.g.
-npx shadcn add sheet
-npx shadcn add calendar
-```
-
----
-
-## 🛠️ Developer Tooling
-
-### ESLint
-
-Configured in `eslint.config.mjs`. Extends `eslint-config-next`.
-
-```bash
-npm run lint
-```
-
-### Prettier
-
-Config in `.prettierrc`. Auto-formats on commit via lint-staged.
-
-```bash
-# Format all files manually
-npx prettier --write .
-```
-
-### Husky + Lint-staged
-
-Pre-commit hooks auto-run linting on staged files before every commit.
-
-Config in `.lintstagedrc.json` and `.lintstagedrc`.
-
-### Jest
-
-Unit and integration tests live in `src/tests/`.
-
-```bash
-npm run test         # Run all tests once
-npm run test:watch   # Run tests in watch mode
-```
-
-### TypeScript Type Checking
-
-```bash
-npm run type-check   # Runs tsc --noEmit
-```
-
----
-
-## 📜 Scripts Reference
-
-| Script      | Command              | Description                          |
-| ----------- | -------------------- | ------------------------------------ |
-| Development | `npm run dev`        | Start the dev server with Webpack    |
-| Build       | `npm run build`      | Create an optimized production build |
-| Start       | `npm run start`      | Start the production server          |
-| Lint        | `npm run lint`       | Run ESLint                           |
-| Test        | `npm run test`       | Run Jest tests                       |
-| Test Watch  | `npm run test:watch` | Run tests in watch mode              |
-| Type Check  | `npm run type-check` | TypeScript type validation           |
-| Commit      | `npm run commit`     | Interactive commit with Commitizen   |
-
----
-
-## 📝 Commit Convention
-
-This project enforces **Conventional Commits** via `Commitlint`. Every commit message must follow the format:
-
-```
-<type>: <subject>
-```
-
-### Allowed Types
-
-| Type       | When to Use                               |
-| ---------- | ----------------------------------------- |
-| `feat`     | A new feature                             |
-| `fix`      | A bug fix                                 |
-| `docs`     | Documentation changes only                |
-| `style`    | Code style / formatting (no logic change) |
-| `refactor` | Code refactoring (no feature or bug fix)  |
-| `test`     | Adding or updating tests                  |
-| `build`    | Build system or dependency changes        |
-| `chore`    | Maintenance tasks                         |
-| `ci`       | CI/CD configuration changes               |
-| `perf`     | Performance improvements                  |
-| `revert`   | Reverting a previous commit               |
-| `security` | Security-related changes                  |
-
-### Examples
-
-```bash
-feat: add user profile page
-fix: resolve token expiry loop on 401
-docs: update environment variable guide
-refactor: extract api calls into feature module
-```
-
-### Using Commitizen (Interactive)
-
-```bash
-npm run commit
-```
-
-This launches an interactive CLI to guide you through writing a valid commit message.
-
----
-
-## 📄 License
-
-This project is a starter template. You are free to use, modify, and distribute it.
+## 🏆 10. Best Practices
+
+- **Atomic Components**: Button, Input, and Modal primitives are decoupled from business logic.
+- **Type-First Development**: Strong interfaces for all data objects to catch errors during development.
+- **Performance**: Heavy use of `useMemo` and `useCallback` for stable reference and efficient filtering.
+- **Aesthetic Excellence**: Unified design tokens for Teal/Slate themes, consistent border radii (`rounded-2xl`), and smooth glassmorphism effects.

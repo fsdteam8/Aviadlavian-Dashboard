@@ -1,28 +1,40 @@
 import { api } from "@/lib/api";
 
-export interface TopicId {
+export interface LibraryTopic {
   _id: string;
   Id: string;
   Name: string;
-  Image_URL?: string;
-  Primary_Body_Region?: string;
+  Primary_Body_Region: string;
   Secondary_Body_Region?: string;
   Acuity?: string;
   Age_Group?: string;
   Tissue_Type?: string[];
+  Etiology_Mechanism?: string;
+  Common_Sports?: string[];
+  Synonyms_Abbreviations?: string[];
+  Importance_Level?: string;
+  Description?: string;
+  Video_URL?: string;
+  Tags_Keywords?: string[];
+  Image_URL?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface Article {
   _id: string;
-  Id: string;
   name: string;
-  topicIds?: TopicId[];
+  topicIds: LibraryTopic[];
   description: string;
   isActive: boolean;
-  image?: string;
-  video?: string;
+  image?: {
+    public_id: string;
+    secure_url: string;
+  };
   createdAt: string;
   updatedAt: string;
+  __v: number;
 }
 
 export interface ArticlesResponse {
@@ -38,15 +50,29 @@ export interface ArticlesResponse {
   };
 }
 
+export type ArticlesQueryParams = {
+  page: number;
+  limit: number;
+  search?: string;
+  speciality?: string;
+  bodyArea?: string;
+};
+
 export const getAllArticles = async (
   page: number = 1,
   limit: number = 10,
   search?: string,
+  speciality?: string,
+  bodyArea?: string,
 ): Promise<ArticlesResponse> => {
-  const url = search
-    ? `/article/get-all?page=${page}&limit=${limit}&search=${search}`
-    : `/article/get-all?page=${page}&limit=${limit}`;
-  const response = await api.get(url);
+  const params: ArticlesQueryParams = { page, limit };
+  if (search) params.search = search;
+  if (speciality) params.speciality = speciality;
+  if (bodyArea) params.bodyArea = bodyArea;
+
+  const response = await api.get<ArticlesResponse>("/article/get-all", {
+    params,
+  });
   return response.data;
 };
 

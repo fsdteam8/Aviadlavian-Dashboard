@@ -1,3 +1,5 @@
+import { LibraryTopic } from "../../articales/api/article.api";
+
 export type LibraryRegion =
   | "AXIAL SKELETON"
   | "UPPER LIMB"
@@ -7,6 +9,10 @@ export type LibraryRegion =
 export type LibraryQueryParams = {
   page?: number;
   limit?: number;
+  search?: string;
+  speciality?: string;
+  bodyArea?: string;
+  [key: string]: string | number | undefined;
 };
 
 export type LibraryImage = {
@@ -18,7 +24,7 @@ export type LibraryArticle = {
   _id: string;
   name: string;
   description: string;
-  topicIds: string[];
+  topicIds: LibraryTopic[];
   image?: LibraryImage;
   isActive: boolean;
   createdAt: string;
