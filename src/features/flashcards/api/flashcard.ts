@@ -8,6 +8,8 @@ export interface FlashcardFilters {
   filterByAgeGroup?: string;
   sortBy?: string;
   search?: string;
+  speciality?: string;
+  bodyArea?: string;
 }
 
 export async function getAllFlashcards(
@@ -27,6 +29,8 @@ export async function getAllFlashcards(
     params.set("filterByAgeGroup", filters.filterByAgeGroup);
   if (filters.sortBy) params.set("sortBy", filters.sortBy);
   if (filters.search) params.set("search", filters.search);
+  if (filters.speciality) params.set("speciality", filters.speciality);
+  if (filters.bodyArea) params.set("bodyArea", filters.bodyArea);
 
   const res = await api.get(`/flashcard/get-flashcards/?${params.toString()}`);
   return res.data;
